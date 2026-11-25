@@ -3,10 +3,10 @@ import csv
 
 # ARCHIVOS
 
-CLIENTES_FILE = "clientes.csv"
-BUSES_FILE = "buses.csv"
-CIUDADES_FILE = "ciudades.csv"
-VIAJES_FILE = "viajes.csv"
+CLIENTES = "clientes.csv"
+BUSES = "buses.csv"
+CIUDADES = "ciudades.csv"
+VIAJES = "viajes.csv"
 
 ENCODE = "utf-8-sig"
 
@@ -58,15 +58,19 @@ class ClienteGestion:
         self.cargar_clientes()
 
     def _inicializar_archivo(self) -> None:
-        """Verifica si el archivo clientes.csv existe; si no, lo crea con su cabecera."""
+        """Verifica si el archivo clientes.csv existe; si no, lo crea con su encabezado."""
         # TODO: Implementar lógica de os.path.exists y creación con csv.writer
-        
-        pass
+        if os.path.exists(CLIENTES):
+            with open(CLIENTES, "w", encoding = ENCODE) as archivo:
+                archivo.write("id_cliente,rut,nombres,apellido_paterno,apellido_materno,contacto")
 
     def cargar_clientes(self) -> None:
         """Carga los clientes desde el archivo CSV a la lista en memoria self.clientes."""
         # TODO: Leer el CSV y poblar objetos Cliente
-        pass
+        with open(CLIENTES, "r", encoding = ENCODE) as archivo: 
+            next(archivo)
+            for linea in archivo:
+                pass
 
     def guardar_clientes(self) -> None:
         """Guarda la lista actual de clientes desde la memoria hacia el archivo CSV."""
