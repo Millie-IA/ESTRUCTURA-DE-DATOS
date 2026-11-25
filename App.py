@@ -6,7 +6,7 @@ os.system("cls")
 
 while True:
     print("MENÚ")
-    
+    print("5. Reportes")
     opcion = input("Ingrese una opción: ")
     
     if opcion == "1":
@@ -22,7 +22,12 @@ while True:
         pass
     
     elif opcion == "5":
-        pass
+        #Reportes
+        sm_reportes = """
+                        
+                    """
+        print(sm_reportes)
+
     
     else:
         input("ERROR: Opción inválida. Ingrese números del 1 al 5.")
