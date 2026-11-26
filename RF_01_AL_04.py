@@ -1,5 +1,7 @@
 import os
 import csv
+from colorama import init, Fore, Style
+
 
 # ARCHIVOS
 
@@ -90,12 +92,12 @@ class ClienteGestion:
         
         # 1. Validaciones
         if not rut.strip() or not nombres.strip() or not apellido_paterno.strip() or not apellido_materno.strip() or not contacto.strip():
-            print("Hay campos obligatorios vacíos.")
+            print(Fore.RED + "Error: Hay campos obligatorios vacíos.")
             return False
 
         for c in self.clientes:
             if c.rut == rut:
-                print(f"El RUT {rut} ya existe.")
+                print(Fore.RED + f"Error: El RUT {rut} ya existe.")
                 return False
 
         # 2. Crear objeto y añadir a memoria
@@ -116,7 +118,7 @@ class ClienteGestion:
                 nuevo_cliente.contacto
             ])
 
-        print("¡Cliente registrado con éxito!")
+        print(Fore.GREEN + "¡Cliente registrado con éxito!")
         return True
 
     def listar_clientes(self) -> list:
@@ -124,10 +126,10 @@ class ClienteGestion:
         self.cargar_clientes()
         
         if not self.clientes:
-            print("No hay clientes registrados en el sistema")
+            print(Fore.ORANGE + "No hay clientes registrados en el sistema")
             return []
         
-        print("\n-- LISTADO DE CLIENTES REGISTRADOS ---")
+        print(Fore.CYAN + "\n-- LISTADO DE CLIENTES REGISTRADOS ---")
         for c in self.clientes:
             print(f"ID : {c.id_cliente} | RUT : {c.rut} | Nombre completo : {c.nombres} {c.apellido_paterno} {c.apellido_materno} | Contacto : {c.contacto}")
         return self.clientes
@@ -178,16 +180,16 @@ class BusGestion:
         
         # 1. Validaciones
         if not patente.strip() or not estado.strip():
-            print("Hay campos obligatorios vacíos.")
+            print(Fore.RED + "Error: Hay campos obligatorios vacíos.")
             return False
 
         if capacidad <= 0:
-            print(f"La capacidad debe ser un número entero positivo.")
+            print(Fore.RED + f"Error: La capacidad debe ser un número entero positivo.")
             return False
 
         for b in self.buses:
             if b.patente.strip().upper() == patente.strip().upper():
-                print(f"La patente {patente} ya existe.")
+                print(Fore.RED + f"Error: La patente {patente} ya existe.")
                 return False
             
         # 2. Crear objeto y añadir a memoria
@@ -206,7 +208,7 @@ class BusGestion:
                 nuevo_bus.estado
             ])
 
-        print("Bus registrado con éxito!")
+        print(Fore.GREEN + "Bus registrado con éxito!")
         return True
 
     def listar_buses(self) -> list:
@@ -214,10 +216,10 @@ class BusGestion:
         self.cargar_buses()
                 
         if not self.buses:
-            print("No hay buses registrados en el sistema")
+            print(Fore.ORANGE + "No hay buses registrados en el sistema")
             return []
         
-        print("\n-- LISTADO DE BUSES REGISTRADOS ---")
+        print(Fore.CYAN + "\n-- LISTADO DE BUSES REGISTRADOS ---")
         for b in self.buses:
             print(f"ID : {b.id_bus} | Patente : {b.patente} | Capacidad : {b.capacidad} | Estado : {b.estado}")
         return self.buses
@@ -263,7 +265,7 @@ class CiudadGestion:
         """RF03: Retorna el catálogo completo de ciudades con sus posiciones."""
         self._inicializar_y_cargar_catalogo()
 
-        print("\n-- LISTADO DE CIUDADES REGISTRADAS ---")
+        print(Fore.CYAN + "\n-- LISTADO DE CIUDADES REGISTRADAS ---")
         for c in self.ciudades:
             print(f"Posición : {c.posicion} | Ciudad : {c.ciudad}")
         return self.ciudades
@@ -347,12 +349,12 @@ class ViajeGestion:
         
         # 1. Validaciones
         if not id_bus.strip() or not fecha.strip() or not hora.strip() or not p_origen.strip() or not p_destino.strip():
-            print("Hay campos obligatorios vacíos para programar el viaje.")
+            print(Fore.RED + "Error: Hay campos obligatorios vacíos para programar el viaje.")
             return False
 
         bus_encontrado = self.bus_gestion.consultar_bus(id_bus)
         if not bus_encontrado:
-            print(f"Error: El bus con ID '{id_bus}' no existe en el sistema.")
+            print(Fore.RED + f"Error: El bus con ID '{id_bus}' no existe en el sistema.")
             return False
         
         
@@ -385,12 +387,12 @@ class ViajeGestion:
         
 
         if (p_origen, p_destino) not in rutas_permitidas:
-            print("Error: La ruta ingresada no está permitida según las combinaciones oficiales.")
+            print(Fore.RED + "Error: La ruta ingresada no está permitida según las combinaciones oficiales.")
             return False
         '''
 
         if tarifa_base <= 0:
-            print("Error: La tarifa base debe ser mayor a 0.")
+            print(Fore.RED + "Error: La tarifa base debe ser mayor a 0.")
             return False
                         
         # 2. Crear objeto y añadir a memoria
@@ -412,14 +414,14 @@ class ViajeGestion:
                 nuevo_viaje.tarifa_base
             ])
 
-        print("Viaje registrado con éxito!")
+        print(Fore.GREEN + "Viaje registrado con éxito!")
         return True
 
     def listar_viajes(self) -> list:
         """RF04: Retorna el listado de viajes programados."""
         self._inicializar_archivo()
         
-        print("\n-- LISTADO DE VIAJES REGISTRAD0S ---")
+        print(Fore.CYAN + "\n-- LISTADO DE VIAJES REGISTRAD0S ---")
         for v in self.viajes:
             print(f" ID : {v.id_viaje} | Bus : {v.id_bus} Fecha : {v.fecha} Hora : {v.hora} | Punto de origen : {v.p_origen} Punto de destino : {v.p_destino} | Tarifa : {v.tarifa_base}")
         return self.viajes
