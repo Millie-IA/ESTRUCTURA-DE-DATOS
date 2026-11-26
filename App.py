@@ -2,7 +2,6 @@ import os
 from colorama import init, Fore, Style
 from RF_01_AL_04 import ClienteGestion, BusGestion, CiudadGestion, ViajeGestion
 
-# Inicializar colorama para asegurar compatibilidad de colores multiplataforma
 init(autoreset=True)
 
 def limpiar_pantalla() -> None:
@@ -11,56 +10,6 @@ def limpiar_pantalla() -> None:
 def pausar() -> None:
     """Detiene la ejecución brevemente para que el usuario lea los mensajes."""
     input(Fore.YELLOW + "\nPresione Enter para continuar..." + Style.RESET_ALL)
-
-def ejecutar_casos_prueba(cliente_gestion: ClienteGestion, bus_gestion: BusGestion, viaje_gestion: ViajeGestion) -> None:
-    """Ejecuta una batería de pruebas automáticas validando casos correctos y de error (RF01 a RF04)."""
-    limpiar_pantalla()
-    print(Fore.CYAN + Style.BRIGHT + "=" * 65)
-    print(Fore.CYAN + Style.BRIGHT + "       EJECUTANDO BATERÍA DE PRUEBAS (ÉXITOS Y ERRORES)      ")
-    print(Fore.CYAN + Style.BRIGHT + "=" * 65)
-
-    # --- 1. PRUEBAS DE CLIENTES (RF01) ---
-    print(Fore.YELLOW + "\n[1] Pruebas de Clientes (RF01):" + Style.RESET_ALL)
-    print("-> Registrando cliente válido 1 (Juan Pérez)...")
-    cliente_gestion.registrar_cliente("12.345.678-9", "Juan", "Pérez", "González", "987654321")
-    
-    print("\n-> Intentando registrar RUT duplicado (12.345.678-9 con otro formato o igual) [Debe fallar]:")
-    cliente_gestion.registrar_cliente("12345678-9", "Juana", "Soto", "Pérez", "123456789")
-
-    print("\n-> Intentando registrar cliente con campos vacíos [Debe fallar]:")
-    cliente_gestion.registrar_cliente("98.765.432-1", "", "Muñoz", "López", "5555555")
-
-    print("\n-> Registrando cliente válido 2 (María Silva)...")
-    cliente_gestion.registrar_cliente("19.876.543-K", "María", "Silva", "Rojas", "911223344")
-
-    # --- 2. PRUEBAS DE BUSES (RF02) ---
-    print(Fore.YELLOW + "\n[2] Pruebas de Buses (RF02):" + Style.RESET_ALL)
-    print("-> Registrando bus válido 1 (Patente: C D F G - 1 2, Capacidad: 40)...")
-    bus_gestion.registrar_bus("CDFG-12", 40, "Disponible")
-
-    print("\n-> Intentando registrar patente duplicada [Debe fallar]:")
-    bus_gestion.registrar_bus("CDFG-12", 30, "Disponible")
-
-    print("\n-> Intentando registrar bus con capacidad cero o negativa [Debe fallar]:")
-    bus_gestion.registrar_bus("XYZW-99", 0, "Disponible")
-    bus_gestion.registrar_bus("AB-CD-11", -15, "Disponible")
-
-    print("\n-> Registrando bus válido 2 (Patente: H J K L - 3 4, Capacidad: 45)...")
-    bus_gestion.registrar_bus("HJKL-34", 45, "Disponible")
-
-    # --- 3. PRUEBAS DE VIAJES (RF04) ---
-    print(Fore.YELLOW + "\n[3] Pruebas de Viajes (RF04):" + Style.RESET_ALL)
-    print("-> Programando viaje válido (Bus ID 1, Concepción -> Santiago)...")
-    viaje_gestion.programar_viaje("1", "2026-12-10", "08:00", "Concepción", "Santiago", 10000.0)
-
-    print("\n-> Intentando programar viaje con un Bus que NO existe (ID 99) [Debe fallar]:")
-    viaje_gestion.programar_viaje("99", "2026-12-11", "09:00", "Concepción", "Santiago", 10000.0)
-
-    print("\n-> Intentando programar viaje con tarifa base negativa o cero [Debe fallar]:")
-    viaje_gestion.programar_viaje("1", "2026-12-12", "10:00", "Santiago", "Rancagua", 0.0)
-
-    print(Fore.GREEN + "\n¡Pruebas automáticas de configuración finalizadas con éxito!")
-    pausar()
 
 def main() -> None:
     # Instanciar los gestores principales
@@ -74,7 +23,6 @@ def main() -> None:
         print(Fore.CYAN + Style.BRIGHT + "=" * 55)
         print(Fore.CYAN + Style.BRIGHT + "      SISTEMA DE GESTIÓN DE PASAJES - RUTASUR       ")
         print(Fore.CYAN + Style.BRIGHT + "=" * 55)
-        print(Fore.GREEN + "[0]" + Style.RESET_ALL + " Cargar Datos de Prueba y Casos de Error Automáticos")
         print(Fore.YELLOW + "1." + Style.RESET_ALL + " Gestión de Clientes (RF01)")
         print(Fore.YELLOW + "2." + Style.RESET_ALL + " Gestión de Buses (RF02)")
         print(Fore.YELLOW + "3." + Style.RESET_ALL + " Catálogo de Ciudades (RF03)")
@@ -88,10 +36,7 @@ def main() -> None:
 
         opcion = input(Fore.GREEN + "Ingrese una opción (0-9): " + Style.RESET_ALL).strip()
 
-        if opcion == "0":
-            ejecutar_casos_prueba(cliente_gestion, bus_gestion, viaje_gestion)
-
-        elif opcion == "1":
+        if opcion == "1":
             # --- SUBMENÚ CLIENTES (RF01) ---
             while True:
                 limpiar_pantalla()
