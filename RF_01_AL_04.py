@@ -59,39 +59,85 @@ class ClienteGestion:
 
     def _inicializar_archivo(self) -> None:
         """Verifica si el archivo clientes.csv existe; si no, lo crea con su encabezado."""
-        # TODO: Implementar lógica de os.path.exists y creación con csv.writer
-        if os.path.exists(CLIENTES):
-            with open(CLIENTES, "w", encoding = ENCODE) as archivo:
-                archivo.write("id_cliente,rut,nombres,apellido_paterno,apellido_materno,contacto")
-
+        if not os.path.exists(CLIENTES):
+            with open(CLIENTES, "w", newline="", encoding=ENCODE) as archivo:
+                writer = csv.writer(archivo)
+                writer.writerow(["id_cliente", "rut", "nombres", "apellido_paterno", "apellido_materno", "contacto"])
+                
     def cargar_clientes(self) -> None:
         """Carga los clientes desde el archivo CSV a la lista en memoria self.clientes."""
-        # TODO: Leer el CSV y poblar objetos Cliente
-        with open(CLIENTES, "r", encoding = ENCODE) as archivo: 
-            next(archivo)
-            for linea in archivo:
-                pass
-
-    def guardar_clientes(self) -> None:
-        """Guarda la lista actual de clientes desde la memoria hacia el archivo CSV."""
-        # TODO: Escribir self.clientes en el CSV
-        pass
+        self._inicializar_archivo()
+        
+        self.clientes = []
+        
+        with open (CLIENTES, "r", encoding = ENCODE) as archivo:
+            
+            lector = csv.DictReader(archivo)
+            
+            for fila in lector:
+                cliente = Cliente(
+                    id_cliente = fila["id_cliente"],
+                    rut = fila["rut"],
+                    nombres = fila["nombres"],
+                    apellido_paterno = fila["apellido_paterno"],
+                    apellido_materno = fila["apellido_materno"],
+                    contacto = fila["contacto"]
+                )
+                
+                self.clientes.append(cliente)
 
     def registrar_cliente(self, rut: str, nombres: str, apellido_paterno: str, apellido_materno: str, contacto: str) -> bool:
         """RF01: Registra un cliente validando campos obligatorios y evitando RUTs duplicados."""
-        # TODO: Validar que no falten datos, verificar RUT único, generar ID automático y guardar.
-        pass
+        
+        # 1. Validaciones
+        if not rut.strip() or not nombres.strip() or not apellido_paterno.strip() or not apellido_materno.strip() or not contacto.strip():
+            print("Hay campos obligatorios vacíos.")
+            return False
+
+        for c in self.clientes:
+            if c.rut == rut:
+                print(f"El RUT {rut} ya existe.")
+                return False
+
+        # 2. Crear objeto y añadir a memoria
+        nuevo_id = str(len(self.clientes) + 1)
+        nuevo_cliente = Cliente(nuevo_id, rut, nombres, apellido_paterno, apellido_materno, contacto)
+        self.clientes.append(nuevo_cliente)
+
+        # 3. Guardar el nuevo registro
+        self._inicializar_archivo()
+        with open(CLIENTES, "a", newline="", encoding=ENCODE) as archivo:
+            writer = csv.writer(archivo)
+            writer.writerow([
+                nuevo_cliente.id_cliente,
+                nuevo_cliente.rut,
+                nuevo_cliente.nombres,
+                nuevo_cliente.apellido_paterno,
+                nuevo_cliente.apellido_materno,
+                nuevo_cliente.contacto
+            ])
+
+        print("¡Cliente registrado con éxito!")
+        return True
 
     def listar_clientes(self) -> list:
         """RF01: Retorna la lista de todos los clientes registrados."""
-        # TODO: Retornar self.clientes o imprimirlos ordenadamente
-        pass
+        self.cargar_clientes()
+        
+        if not self.clientes:
+            print("No hay clientes registrados en el sistema")
+            return []
+        
+        for c in self.clientes:
+            print(f"ID : {c.id_cliente} | RUT : {c.rut} | Nombre completo : {c.nombres} {c.apellido_paterno} {c.apellido_materno} | Contacto : {c.contacto}")
+        return self.clientes
 
     def buscar_cliente_por_rut(self, rut: str) -> Cliente | None:
         """RF01: Busca y retorna un cliente según su número de RUT."""
-        # TODO: Buscar en la lista y retornar el objeto o None si no existe
-        pass
-
+        for c in self.clientes:
+            if c.rut.strip() == rut.strip():
+                return c
+        return None
 
 class BusGestion:
     def __init__(self):
