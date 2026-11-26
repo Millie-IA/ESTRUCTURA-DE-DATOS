@@ -7,7 +7,7 @@ import os
 from ruta_datos import *
 
 
-def listaViajes() -> list:
+def listaViajes() -> list: # transcrita 
     viajes = []
     f = open(ARCHIVO_VIAJES, "r", encoding=ENCODE)
     lineas = f.readlines()
@@ -31,7 +31,7 @@ def listaViajes() -> list:
 
     return viajes
 
-def obtenerBusDeViaje(id_bus_buscado: str) -> list:
+def obtenerBusDeViaje(id_bus_buscado: str) -> list: #transcrita
 
     f = open(ARCHIVO_BUSES, "r", encoding=ENCODE)
     lineas = f.readlines()
@@ -82,7 +82,7 @@ def obtenerPasajesDeViaje(viaje: list) -> list:
     return pasajes_viaje
 
 
-def obtenerClientePorId(id_cliente_buscado: int) -> list:
+def obtenerClientePorId(id_cliente_buscado: int) -> list: #transcrita
     id_buscado = str(id_cliente_buscado).strip()
 
     f = open(ARCHIVO_CLIENTES, "r", encoding=ENCODE)

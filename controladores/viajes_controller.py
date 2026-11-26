@@ -46,3 +46,10 @@ def listar_viajes() -> List[Viaje]:
         raise RuntimeError(f"Error al leer viajes: {exc}") from exc
 
     return viajes
+
+def buscar_viaje_por_id(id_viaje: int) -> Optional[Viaje]:
+    viajes: List[Viaje] = listar_viajes()
+    for viaje in viajes:
+        if viaje.id_viaje == id_viaje:
+            return viaje
+    return None
