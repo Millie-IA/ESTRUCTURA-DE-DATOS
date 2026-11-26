@@ -33,7 +33,7 @@ class Bus:
         self.estado = estado # Ej: 'Disponible', 'En ruta', etc.
 
 class Ciudad:
-    def __init__(self,posicion: int, ciudad: str) -> None:
+    def __init__(self, posicion: int, ciudad: str) -> None:
         self.posicion = posicion
         self.nombre = ciudad
 
@@ -95,8 +95,10 @@ class ClienteGestion:
             print(Fore.RED + "Error: Hay campos obligatorios vacíos.")
             return False
 
+        rut_limpio = rut.replace(".", "").replace("-", "").upper().strip()
         for c in self.clientes:
-            if c.rut == rut:
+            c_rut_l = c.rut.replace(".", "").replace("-", "").upper().strip()
+            if c.rut_l == rut_limpio:
                 print(Fore.RED + f"Error: El RUT {rut} ya existe.")
                 return False
 
@@ -257,7 +259,7 @@ class CiudadGestion:
             for fila in lector:
                 ciudad = Ciudad(
                     posicion = int(fila["posicion"]),
-                    nombre = fila["ciudad"]
+                    ciudad = fila["ciudad"]
                     )
                 self.ciudades.append(ciudad)
 
