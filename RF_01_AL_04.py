@@ -95,10 +95,9 @@ class ClienteGestion:
             print(Fore.RED + "Error: Hay campos obligatorios vacíos.")
             return False
 
-        rut_limpio = rut.replace(".", "").replace("-", "").upper().strip()
+        rut_limpio = rut.replace(".", "").replace("-", "").upper()
         for c in self.clientes:
-            c_rut_l = c.rut.replace(".", "").replace("-", "").upper().strip()
-            if c.rut_l == rut_limpio:
+            if c.rut.replace(".", "").replace("-", "").upper() == rut_limpio:
                 print(Fore.RED + f"Error: El RUT {rut} ya existe.")
                 return False
 
@@ -344,15 +343,17 @@ class ViajeGestion:
 
         return True, tarifa_calculada, "Tramo válido."
 
-    def programar_viaje(self, id_bus: str, fecha: str, hora: str, p_origen: str, p_destino: str, tarifa_base: float) -> bool:
+    def programar_viaje(self, id_bus: str, fecha: str, hora: str, p_origen: int, p_destino: int, tarifa_base: float) -> bool:
         """RF04: Programa un viaje validando que el bus exista, y que la ruta sea 
         estrictamente Concepción-Santiago o Santiago-Concepción."""
         
         
         # 1. Validaciones
-        if not id_bus.strip() or not fecha.strip() or not hora.strip() or not p_origen.strip() or not p_destino.strip():
+        if not id_bus.strip() or not fecha.strip() or not hora.strip() or not str(p_origen).strip() or not str(p_destino).strip():
             print(Fore.RED + "Error: Hay campos obligatorios vacíos para programar el viaje.")
             return False
+        p_origen = int(p_origen)
+        p_destino = int(p_destino)
 
         bus_encontrado = self.bus_gestion.consultar_bus(id_bus)
         if not bus_encontrado:

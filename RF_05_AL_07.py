@@ -166,21 +166,24 @@ class PasajeGestion:
             print(f"Error - El tramo seleccionado no respeta el sentido del viaje.")
             return False
         
+        min_v, max_v = min(pos_v_orig, pos_p_dest), max(pos_v_orig, pos_v_dest)
+        if not (min_v <= pos_p_orig <= max_v and min_v <= pos_p_dest <= max_v):
+            print("Error - El tramo solicitado esta fuera del recorrido del viaje")
+            return False
+        
         if not self.reutilizacion_de_asientos_por_tramo(id_viaje, asiento, pos_p_orig, pos_p_dest):
             print(f"Error - El asiento {asiento} ya está ocupado en parte o totalidad de ese tramo.")
             return False
 
         valor = self.calcular_tarifa(viaje.tarifa_base, pos_p_orig, pos_p_dest)
         nuevo_id = str(len(self.pasajes) + 1)
-        nuevo_pasaje = Pasaje(..., "VIGENTE")
-        
-        nuevo_id = str(len(self.pasajes) + 1)
         nuevo_pasaje = Pasaje(
             nuevo_id,
-            id_viaje.strip(),
-            id_cliente.strip(),
-            p_origen.strip(),
-            p_destino.strip(),
+            
+            str(id_viaje).strip(),
+            str(id_cliente).strip(),
+            str(p_origen).strip(),
+            str(p_destino).strip(),
             asiento,
             valor,
             "HABILITADO"
@@ -194,7 +197,7 @@ class PasajeGestion:
     
     def anular_pasaje(self, id_pasaje:str)-> bool:
         for p in self.pasajes:
-            if p.id_pasaje.strip() == id_pasaje.strip():
+            if p.id_pasaje.strip() == str(id_pasaje).strip():
                 if p.estado == "ANULADO":
                     print(f"El pasaje {id_pasaje} ya se encuentra ANULADO.")
                     return False
@@ -208,6 +211,3 @@ class PasajeGestion:
     
 
 
-'''agregar git add .
-git commit -m "se implemento venta RF05 
-y anulacion RF07 de pasajes"'''

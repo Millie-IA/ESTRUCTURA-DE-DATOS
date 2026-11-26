@@ -25,9 +25,9 @@ print(Fore.YELLOW + "\n[RF03] Ciudades cargadas en memoria:", len(ciudades.ciuda
 for c in ciudades.ciudades:
     print(f"Posición: {c.posicion} | Ciudad: {c.nombre}")
 
-# 4. Prueba Viajes (RF04)
+# 4. Prueba Viajes (RF04) -> Posición 0 = Concepción, Posición 5 = Santiago
 vg = ViajeGestion(bg, ciudades)
-vg.programar_viaje("1", "2026-12-01", "08:30", "Concepción", "Santiago", 15000.0)
+vg.programar_viaje("1", "2026-12-01", "08:30", 0, 5, 15000.0)
 vg.listar_viajes()
 
 print(Fore.GREEN + "\n=== PRUEBAS FINALIZADAS SIN ERRORES ===")
