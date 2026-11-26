@@ -1,7 +1,6 @@
 
 # Archivo creado por ALEJANDRO JARPA
 # Este archivo controla todo lo que tiene que ver con la nomina de viajes, consumiendo datos desde los archivos
-# El objetivo de la nomina es obtener todos los pasajeros de un viaje en especifico, tambien incluye los datos del mismo viaje y del bus asiganado
 
 import os
 from ruta_datos import *

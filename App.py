@@ -1,6 +1,10 @@
+
+# temporalmente en uso. se reescribirá en el futuro para mejorar la interfaz de usuario y la estructura del código, 
+# haciendo uso del archivo estilos_ui.py para centralizar los estilos de la interfaz de usuario y mejorar la consistencia en toda la aplicación.
+
 import os
 from colorama import Fore, Style, init
-from menu_nomina import opcion_5_nomina
+from ui.menu_nomina import opcion_5_nomina
 
 init(autoreset=True)
 
