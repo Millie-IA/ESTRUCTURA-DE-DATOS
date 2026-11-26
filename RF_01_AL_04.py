@@ -127,7 +127,7 @@ class ClienteGestion:
         self.cargar_clientes()
         
         if not self.clientes:
-            print(Fore.ORANGE + "No hay clientes registrados en el sistema")
+            print(Fore.YELLOW + "No hay clientes registrados en el sistema")
             return []
         
         print(Fore.CYAN + "\n-- LISTADO DE CLIENTES REGISTRADOS ---")
@@ -217,7 +217,7 @@ class BusGestion:
         self.cargar_buses()
                 
         if not self.buses:
-            print(Fore.ORANGE + "No hay buses registrados en el sistema")
+            print(Fore.YELLOW + "No hay buses registrados en el sistema")
             return []
         
         print(Fore.CYAN + "\n-- LISTADO DE BUSES REGISTRADOS ---")
