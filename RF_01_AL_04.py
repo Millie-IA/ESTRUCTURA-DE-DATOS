@@ -95,10 +95,9 @@ class ClienteGestion:
             print(Fore.RED + "Error: Hay campos obligatorios vacíos.")
             return False
 
-        rut_limpio = rut.replace(".", "").replace("-", "").upper().strip()
+        rut_limpio = rut.replace(".", "").replace("-", "").upper()
         for c in self.clientes:
-            c_rut_l = c.rut.replace(".", "").replace("-", "").upper().strip()
-            if c.rut_l == rut_limpio:
+            if c.rut.replace(".", "").replace("-", "").upper() == rut_limpio:
                 print(Fore.RED + f"Error: El RUT {rut} ya existe.")
                 return False
 
