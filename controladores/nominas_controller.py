@@ -53,7 +53,8 @@ def obtenerBusDeViaje(id_bus_buscado: str) -> list: #transcrita
 
     return []
 
-def obtenerPasajesDeViaje(viaje: list) -> list:
+
+def obtenerPasajesDeViaje(viaje: list) -> list: 
     id_viaje_buscado = str(viaje[0]).strip()
     pasajes_viaje = []
 

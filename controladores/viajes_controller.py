@@ -1,7 +1,7 @@
 
 # Este archivo controla todo lo que tiene que ver con los viajes como entidad
 
-from typing import List
+from typing import List, Optional
 from modelos.entidades import Viaje
 from ruta_datos import ARCHIVO_VIAJES, ENCODE
 
@@ -46,6 +46,7 @@ def listar_viajes() -> List[Viaje]:
         raise RuntimeError(f"Error al leer viajes: {exc}") from exc
 
     return viajes
+
 
 def buscar_viaje_por_id(id_viaje: int) -> Optional[Viaje]:
     viajes: List[Viaje] = listar_viajes()
