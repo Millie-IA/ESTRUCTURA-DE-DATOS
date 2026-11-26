@@ -31,11 +31,14 @@ class PasajeGestion:
         
 
     def _inicializar_archivo(self)-> None:
-        if not os.path.exists(PASAJES) or os.path.getsize(PASAJES) == 0:
-            with open(PASAJES, "w", newline= "", encoding=ENCODE) as archivo:
-                writer = csv.writer(archivo)
-                writer.writerow(["id_pasaje", "id_viaje", "id_cliente", "p_origen", "p_destino", "asiento", "valor", "estado"])
-    
+        try:
+            
+            if not os.path.exists(PASAJES) or os.path.getsize(PASAJES) == 0:
+                with open(PASAJES, "w", newline= "", encoding=ENCODE) as archivo:
+                    writer = csv.writer(archivo)
+                    writer.writerow(["id_pasaje", "id_viaje", "id_cliente", "p_origen", "p_destino", "asiento", "valor", "estado"])
+        except OSError as e:
+            print(f"Error de archivo al inicializar {PASAJES}: {e}")
         """Crea pasajes.csv con su cabecera si no existe."""
         # TODO: verificar os.path.exists y crear cabecera con csv.writer
 
@@ -44,42 +47,47 @@ class PasajeGestion:
         """Carga los pasajes desde pasajes.csv."""
         self._inicializar_archivo()
         self.pasajes = []
-        with open(PASAJES, "r", encoding=ENCODE) as archivo:
-            lector = csv.DictReader(archivo)
-            for fila in lector:
-                pasaje  = Pasaje(
-                    fila["id_pasaje"],
-                    fila["id_viaje"],
-                    fila["id_cliente"],
-                    fila["p_origen"],
-                    fila["p_destino"],
-                    int(fila["asiento"]),
-                    float(fila["valor"]),
-                    fila["estado"] 
-                )
-                self.pasajes.append(pasaje)
+        try:
+            with open(PASAJES, "r", encoding=ENCODE) as archivo:
+                lector = csv.DictReader(archivo)
+                for fila in lector:
+                    pasaje  = Pasaje(
+                        fila["id_pasaje"],
+                        fila["id_viaje"],
+                        fila["id_cliente"],
+                        fila["p_origen"],
+                        fila["p_destino"],
+                        int(fila["asiento"]),
+                        float(fila["valor"]),
+                        fila["estado"] 
+                    )
+                    self.pasajes.append(pasaje)
+        except (OSError, ValueError, KeyError) as e:
+            print(f"Error al leer o convertir datos desde {PASAJES}: {e}")
 
     # TODO: leer csv con DictReader y armar lista de pasajes
 
 
     def guardar_pasajes(self)-> None:
         """Guarda la lista de pasajes en pasajes.csv."""
-        with open(PASAJES, "w", newline="", encoding=ENCODE) as archivo:
-            writer= csv.writer(archivo)
-            writer.writerow(["id_pasaje", "id_viaje", "id_cliente", "p_origen", "p_destino", "asiento", "valor", "estado"])
-            for p in self.pasajes:
-                writer.writerow([
-                    p.id_pasaje,
-                    p.id_viaje,
-                    p.id_cliente,
-                    p.p_origen,
-                    p.p_destino,
-                    p.asiento,
-                    p.valor,
-                    p.estado
-                ])
-                # TODO: escribir cabecera y filas con csv.writer
-                
+        try:
+            with open(PASAJES, "w", newline="", encoding=ENCODE) as archivo:
+                writer= csv.writer(archivo)
+                writer.writerow(["id_pasaje", "id_viaje", "id_cliente", "p_origen", "p_destino", "asiento", "valor", "estado"])
+                for p in self.pasajes:
+                    writer.writerow([
+                        p.id_pasaje,
+                        p.id_viaje,
+                        p.id_cliente,
+                        p.p_origen,
+                        p.p_destino,
+                        p.asiento,
+                        p.valor,
+                        p.estado
+                    ])
+                    # TODO: escribir cabecera y filas con csv.writer
+        except OSError as e:
+            print(f"Error al guardar en {PASAJES} (ve que no esté abierto): {e}")        
                 
     def _obtener_posicion_ciudad(self, dato_ciudad:str)-> int | None:
         dato = str(dato_ciudad).strip().lower()
