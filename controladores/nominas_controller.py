@@ -1,6 +1,7 @@
 
 # Archivo creado por ALEJANDRO JARPA
 # Este archivo controla todo lo que tiene que ver con la nomina de viajes, consumiendo datos desde los archivos
+# Temporalmente en uso, se reescribirá para mejorar la legibilidad y la estructura del código.
 
 import os
 from ruta_datos import *
@@ -8,7 +9,7 @@ from ruta_datos import *
 
 def listaViajes() -> list:
     viajes = []
-    f = open(ARCHIVO_VIAJE, "r", encoding=ENCODE)
+    f = open(ARCHIVO_VIAJES, "r", encoding=ENCODE)
     lineas = f.readlines()
     f.close()
 
