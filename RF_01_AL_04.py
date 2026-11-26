@@ -2,6 +2,7 @@ import os
 import csv
 from colorama import init, Fore, Style
 
+init(autoreset = True)
 
 # ARCHIVOS
 
@@ -270,7 +271,6 @@ class CiudadGestion:
         for c in self.ciudades:
             print(f"Posición : {c.posicion} | Ciudad : {c.ciudad}")
         return self.ciudades
-
 
 class ViajeGestion:
     def __init__(self, bus_gestion: BusGestion, ciudad_gestion: CiudadGestion) -> None:
