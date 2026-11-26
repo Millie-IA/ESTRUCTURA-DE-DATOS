@@ -1,5 +1,7 @@
 import os
 import csv
+from colorama import init, Fore, Style
+
 
 # ARCHIVOS
 
@@ -15,7 +17,7 @@ ENCODE = "utf-8-sig"
 # ==========================================
 
 class Cliente:
-    def __init__(self, id_cliente: str, rut: str, nombres: str, apellido_paterno: str, apellido_materno: str, contacto: str):
+    def __init__(self, id_cliente: str, rut: str, nombres: str, apellido_paterno: str, apellido_materno: str, contacto: str) -> None:
         self.id_cliente = id_cliente
         self.rut = rut
         self.nombres = nombres
@@ -24,19 +26,19 @@ class Cliente:
         self.contacto = contacto
 
 class Bus:
-    def __init__(self, id_bus: str, patente: str, capacidad: int, estado: str):
+    def __init__(self, id_bus: str, patente: str, capacidad: int, estado: str) -> None:
         self.id_bus = id_bus
         self.patente = patente
         self.capacidad = capacidad
         self.estado = estado # Ej: 'Disponible', 'En ruta', etc.
 
 class Ciudad:
-    def __init__(self,posicion: int, ciudad: str) :
+    def __init__(self, posicion: int, ciudad: str) -> None:
         self.posicion = posicion
         self.nombre = ciudad
 
 class Viaje:
-    def __init__(self, id_viaje: str, id_bus: str, fecha: str, hora: str, p_origen: str, p_destino: str, tarifa_base: float):
+    def __init__(self, id_viaje: str, id_bus: str, fecha: str, hora: str, p_origen: str, p_destino: str, tarifa_base: float) -> None:
         self.id_viaje = id_viaje
         self.id_bus = id_bus
         self.fecha = fecha
@@ -51,14 +53,14 @@ class Viaje:
 # ==========================================
 
 class ClienteGestion:
-    def __init__(self):
+    def __init__(self) -> None:
         self.clientes = []
         self._inicializar_archivo()
         self.cargar_clientes()
 
     def _inicializar_archivo(self) -> None:
         """Verifica si el archivo clientes.csv existe; si no, lo crea con su encabezado."""
-        if not os.path.exists(CLIENTES):
+        if not os.path.exists(CLIENTES) or os.path.getsize(CLIENTES) == 0:
             with open(CLIENTES, "w", newline = "", encoding = ENCODE) as archivo:
                 writer = csv.writer(archivo)
                 writer.writerow(["id_cliente", "rut", "nombres", "apellido_paterno", "apellido_materno", "contacto"])
@@ -90,12 +92,14 @@ class ClienteGestion:
         
         # 1. Validaciones
         if not rut.strip() or not nombres.strip() or not apellido_paterno.strip() or not apellido_materno.strip() or not contacto.strip():
-            print("Hay campos obligatorios vacíos.")
+            print(Fore.RED + "Error: Hay campos obligatorios vacíos.")
             return False
 
+        rut_limpio = rut.replace(".", "").replace("-", "").upper().strip()
         for c in self.clientes:
-            if c.rut == rut:
-                print(f"El RUT {rut} ya existe.")
+            c_rut_l = c.rut.replace(".", "").replace("-", "").upper().strip()
+            if c.rut_l == rut_limpio:
+                print(Fore.RED + f"Error: El RUT {rut} ya existe.")
                 return False
 
         # 2. Crear objeto y añadir a memoria
@@ -116,7 +120,7 @@ class ClienteGestion:
                 nuevo_cliente.contacto
             ])
 
-        print("¡Cliente registrado con éxito!")
+        print(Fore.GREEN + "¡Cliente registrado con éxito!")
         return True
 
     def listar_clientes(self) -> list:
@@ -124,10 +128,10 @@ class ClienteGestion:
         self.cargar_clientes()
         
         if not self.clientes:
-            print("No hay clientes registrados en el sistema")
+            print(Fore.ORANGE + "No hay clientes registrados en el sistema")
             return []
         
-        print("\n-- LISTADO DE CLIENTES REGISTRADOS ---")
+        print(Fore.CYAN + "\n-- LISTADO DE CLIENTES REGISTRADOS ---")
         for c in self.clientes:
             print(f"ID : {c.id_cliente} | RUT : {c.rut} | Nombre completo : {c.nombres} {c.apellido_paterno} {c.apellido_materno} | Contacto : {c.contacto}")
         return self.clientes
@@ -140,7 +144,7 @@ class ClienteGestion:
         return None
 
 class BusGestion:
-    def __init__(self):
+    def __init__(self) -> None:
         self.buses = []
         self._inicializar_archivo()
         self.cargar_buses()
@@ -148,10 +152,10 @@ class BusGestion:
     def _inicializar_archivo(self) -> None:
         """Crea el archivo buses.csv con su cabecera si no existe."""
         
-        if not os.path.exists(BUSES):
+        if not os.path.exists(BUSES) or os.path.getsize(BUSES) == 0:
             with open(BUSES, "w", newline = "", encoding = ENCODE) as archivo:
                 writer = csv.writer(archivo)
-                writer.writerow(["id_bus"," patente", "capacidad", "estado"])
+                writer.writerow(["id_bus","patente", "capacidad", "estado"])
                 
     def cargar_buses(self) -> None:
         """Carga los buses desde el archivo CSV."""
@@ -178,16 +182,16 @@ class BusGestion:
         
         # 1. Validaciones
         if not patente.strip() or not estado.strip():
-            print("Hay campos obligatorios vacíos.")
+            print(Fore.RED + "Error: Hay campos obligatorios vacíos.")
             return False
 
         if capacidad <= 0:
-            print(f"La capacidad debe ser un número entero positivo.")
+            print(Fore.RED + f"Error: La capacidad debe ser un número entero positivo.")
             return False
 
         for b in self.buses:
             if b.patente.strip().upper() == patente.strip().upper():
-                print(f"La patente {patente} ya existe.")
+                print(Fore.RED + f"Error: La patente {patente} ya existe.")
                 return False
             
         # 2. Crear objeto y añadir a memoria
@@ -206,7 +210,7 @@ class BusGestion:
                 nuevo_bus.estado
             ])
 
-        print("Bus registrado con éxito!")
+        print(Fore.GREEN + "Bus registrado con éxito!")
         return True
 
     def listar_buses(self) -> list:
@@ -214,10 +218,10 @@ class BusGestion:
         self.cargar_buses()
                 
         if not self.buses:
-            print("No hay buses registrados en el sistema")
+            print(Fore.ORANGE + "No hay buses registrados en el sistema")
             return []
         
-        print("\n-- LISTADO DE BUSES REGISTRADOS ---")
+        print(Fore.CYAN + "\n-- LISTADO DE BUSES REGISTRADOS ---")
         for b in self.buses:
             print(f"ID : {b.id_bus} | Patente : {b.patente} | Capacidad : {b.capacidad} | Estado : {b.estado}")
         return self.buses
@@ -230,7 +234,7 @@ class BusGestion:
         return None
 
 class CiudadGestion:
-    def __init__(self):
+    def __init__(self) -> None:
         self.ciudades = []
         self._inicializar_y_cargar_catalogo()
 
@@ -238,7 +242,7 @@ class CiudadGestion:
         """RF03: Carga el catálogo fijo de las 6 ciudades si el archivo no existe o está vacío."""
         # Ciudades fijas exigidas:
         # 0: Concepción, 1: Chillán, 2: Linares, 3: Talca, 4: Rancagua, 5: Santiago
-        if not os.path.exists(CIUDADES):
+        if not os.path.exists(CIUDADES) or os.path.getsize(CIUDADES) == 0:
             with open(CIUDADES, "w", newline = "", encoding = ENCODE) as archivo:
                 writer = csv.writer(archivo)
                 writer.writerow(["posicion", "ciudad"])
@@ -255,7 +259,7 @@ class CiudadGestion:
             for fila in lector:
                 ciudad = Ciudad(
                     posicion = int(fila["posicion"]),
-                    nombre = fila["nombre"]
+                    ciudad = fila["ciudad"]
                     )
                 self.ciudades.append(ciudad)
 
@@ -263,14 +267,14 @@ class CiudadGestion:
         """RF03: Retorna el catálogo completo de ciudades con sus posiciones."""
         self._inicializar_y_cargar_catalogo()
 
-        print("\n-- LISTADO DE CIUDADES REGISTRADAS ---")
+        print(Fore.CYAN + "\n-- LISTADO DE CIUDADES REGISTRADAS ---")
         for c in self.ciudades:
             print(f"Posición : {c.posicion} | Ciudad : {c.ciudad}")
         return self.ciudades
 
 
 class ViajeGestion:
-    def __init__(self, bus_gestion: BusGestion, ciudad_gestion: CiudadGestion):
+    def __init__(self, bus_gestion: BusGestion, ciudad_gestion: CiudadGestion) -> None:
         self.viajes = []
         self.bus_gestion = bus_gestion
         self.ciudad_gestion = ciudad_gestion
@@ -280,7 +284,7 @@ class ViajeGestion:
     def _inicializar_archivo(self) -> None:
         """Crea el archivo viajes.csv con su cabecera si no existe."""
         
-        if not os.path.exists(VIAJES):
+        if not os.path.exists(VIAJES) or os.path.getsize(VIAJES) == 0:
             with open(VIAJES, "w", newline = "", encoding = ENCODE) as archivo:
                 writer = csv.writer(archivo)
                 writer.writerow(["id_viaje", "id_bus", "fecha", "hora", "p_origen", "p_destino", "tarifa_base"])
@@ -309,7 +313,7 @@ class ViajeGestion:
                 
                 self.viajes.append(viaje)
      
-    def validar_y_calcular_tramo(pos_origen: int, pos_destino: int, tarifa_base: float = 10000.0) -> tuple[bool, float, str]:
+    def validar_y_calcular_tramo(self, pos_origen: int, pos_destino: int, tarifa_base: float = 10000.0) -> tuple[bool, float, str]:
         """
         Valida que el tramo respete un sentido lógico (de sur a norte o de norte a sur) 
         y calcula la tarifa automática según los segmentos no utilizados (10% descuento acumulativo por segmento).
@@ -347,12 +351,12 @@ class ViajeGestion:
         
         # 1. Validaciones
         if not id_bus.strip() or not fecha.strip() or not hora.strip() or not p_origen.strip() or not p_destino.strip():
-            print("Hay campos obligatorios vacíos para programar el viaje.")
+            print(Fore.RED + "Error: Hay campos obligatorios vacíos para programar el viaje.")
             return False
 
         bus_encontrado = self.bus_gestion.consultar_bus(id_bus)
         if not bus_encontrado:
-            print(f"Error: El bus con ID '{id_bus}' no existe en el sistema.")
+            print(Fore.RED + f"Error: El bus con ID '{id_bus}' no existe en el sistema.")
             return False
         
         
@@ -363,7 +367,7 @@ class ViajeGestion:
             
             - En la segunda, solo hay una condición con tramos predeterminados según la segunda tabla del PDF.'''
         # OPCIÓN 1
-        self.validar_y_calcular_tramo()
+        self.validar_y_calcular_tramo(p_origen, p_destino)
 
         ''' OPCIÓN 2 : RUTAS PREDETERMINADAS
         
@@ -385,12 +389,12 @@ class ViajeGestion:
         
 
         if (p_origen, p_destino) not in rutas_permitidas:
-            print("Error: La ruta ingresada no está permitida según las combinaciones oficiales.")
+            print(Fore.RED + "Error: La ruta ingresada no está permitida según las combinaciones oficiales.")
             return False
         '''
 
         if tarifa_base <= 0:
-            print("❌ Error: La tarifa base debe ser mayor a 0.")
+            print(Fore.RED + "Error: La tarifa base debe ser mayor a 0.")
             return False
                         
         # 2. Crear objeto y añadir a memoria
@@ -408,18 +412,18 @@ class ViajeGestion:
                 nuevo_viaje.fecha,
                 nuevo_viaje.hora,
                 nuevo_viaje.p_origen,
-                nuevo_viaje.id_destino,
+                nuevo_viaje.p_destino,
                 nuevo_viaje.tarifa_base
             ])
 
-        print("Viaje registrado con éxito!")
+        print(Fore.GREEN + "Viaje registrado con éxito!")
         return True
 
     def listar_viajes(self) -> list:
         """RF04: Retorna el listado de viajes programados."""
         self._inicializar_archivo()
         
-        print("\n-- LISTADO DE VIAJES REGISTRAD0S ---")
+        print(Fore.CYAN + "\n-- LISTADO DE VIAJES REGISTRAD0S ---")
         for v in self.viajes:
-            print(f" ID : {v.id_viajes} | Bus : {v.id_bus} Fecha : {v.fecha} Hora : {v.hora} | Punto de origen : {v.p_origen} Punto de destino : {v.p_destino} | Tarifa : {v.tarifa_base}")
+            print(f" ID : {v.id_viaje} | Bus : {v.id_bus} Fecha : {v.fecha} Hora : {v.hora} | Punto de origen : {v.p_origen} Punto de destino : {v.p_destino} | Tarifa : {v.tarifa_base}")
         return self.viajes
