@@ -166,7 +166,7 @@ class PasajeGestion:
             print(f"Error - El tramo seleccionado no respeta el sentido del viaje.")
             return False
         
-        min_v, max_v = min(pos_v_orig, pos_p_dest), max(pos_v_orig, pos_v_dest)
+        min_v, max_v = min(pos_v_orig, pos_v_dest), max(pos_v_orig, pos_v_dest)
         if not (min_v <= pos_p_orig <= max_v and min_v <= pos_p_dest <= max_v):
             print("Error - El tramo solicitado esta fuera del recorrido del viaje")
             return False
