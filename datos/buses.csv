@@ -1,2 +1,4 @@
 id_bus,patente,capacidad,estado
 1,ABCD-12,44,disponible
+2,ASDC12,23,disponible
+3,QWEEQ2,24,no disponible
