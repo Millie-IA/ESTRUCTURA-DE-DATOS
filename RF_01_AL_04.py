@@ -31,19 +31,18 @@ class Bus:
         self.estado = estado # Ej: 'Disponible', 'En ruta', etc.
 
 class Ciudad:
-    def __init__(self, id_ciudad: str, nombre: str, posicion: int):
-        self.id_ciudad = id_ciudad
-        self.nombre = nombre
+    def __init__(self,posicion: int, ciudad: str) :
         self.posicion = posicion
+        self.nombre = ciudad
 
 class Viaje:
-    def __init__(self, id_viaje: str, id_bus: str, fecha: str, hora: str, id_origen: str, id_destino: str, tarifa_base: float):
+    def __init__(self, id_viaje: str, id_bus: str, fecha: str, hora: str, p_origen: str, p_destino: str, tarifa_base: float):
         self.id_viaje = id_viaje
         self.id_bus = id_bus
         self.fecha = fecha
         self.hora = hora
-        self.id_origen = id_origen
-        self.id_destino = id_destino
+        self.p_origen = p_origen
+        self.p_destino = p_destino
         self.tarifa_base = tarifa_base
 
 
@@ -60,7 +59,7 @@ class ClienteGestion:
     def _inicializar_archivo(self) -> None:
         """Verifica si el archivo clientes.csv existe; si no, lo crea con su encabezado."""
         if not os.path.exists(CLIENTES):
-            with open(CLIENTES, "w", newline="", encoding=ENCODE) as archivo:
+            with open(CLIENTES, "w", newline = "", encoding = ENCODE) as archivo:
                 writer = csv.writer(archivo)
                 writer.writerow(["id_cliente", "rut", "nombres", "apellido_paterno", "apellido_materno", "contacto"])
                 
@@ -106,7 +105,7 @@ class ClienteGestion:
 
         # 3. Guardar el nuevo registro
         self._inicializar_archivo()
-        with open(CLIENTES, "a", newline="", encoding=ENCODE) as archivo:
+        with open(CLIENTES, "a", newline = "", encoding = ENCODE) as archivo:
             writer = csv.writer(archivo)
             writer.writerow([
                 nuevo_cliente.id_cliente,
@@ -128,14 +127,15 @@ class ClienteGestion:
             print("No hay clientes registrados en el sistema")
             return []
         
+        print("\n-- LISTADO DE CLIENTES REGISTRADOS ---")
         for c in self.clientes:
             print(f"ID : {c.id_cliente} | RUT : {c.rut} | Nombre completo : {c.nombres} {c.apellido_paterno} {c.apellido_materno} | Contacto : {c.contacto}")
         return self.clientes
 
-    def buscar_cliente_por_rut(self, rut: str) -> Cliente | None:
-        """RF01: Busca y retorna un cliente según su número de RUT."""
+    def buscar_cliente_por_id(self, id_cliente: str) -> Cliente | None:
+        """RF01: Busca y retorna un cliente según su ID."""
         for c in self.clientes:
-            if c.rut.strip() == rut.strip():
+            if c.id_cliente.strip() == id_cliente.strip():
                 return c
         return None
 
@@ -147,34 +147,87 @@ class BusGestion:
 
     def _inicializar_archivo(self) -> None:
         """Crea el archivo buses.csv con su cabecera si no existe."""
-        # TODO: Implementar
-        pass
-
+        
+        if not os.path.exists(BUSES):
+            with open(BUSES, "w", newline = "", encoding = ENCODE) as archivo:
+                writer = csv.writer(archivo)
+                writer.writerow(["id_bus"," patente", "capacidad", "estado"])
+                
     def cargar_buses(self) -> None:
         """Carga los buses desde el archivo CSV."""
-        # TODO: Implementar
-        pass
-
-    def guardar_buses(self) -> None:
-        """Guarda los buses en el archivo CSV."""
-        # TODO: Implementar
-        pass
+        self._inicializar_archivo()
+                
+        self.buses = []
+        
+        with open (BUSES, "r", encoding = ENCODE) as archivo:
+            
+            lector = csv.DictReader(archivo)
+            
+            for fila in lector:
+                bus = Bus(
+                    id_bus = fila["id_bus"],
+                    patente = fila["patente"],
+                    capacidad = int(fila["capacidad"]),
+                    estado = fila["estado"]
+                )
+                
+                self.buses.append(bus)
 
     def registrar_bus(self, patente: str, capacidad: int, estado: str) -> bool:
         """RF02: Registra un bus validando patente única y capacidad entera positiva."""
-        # TODO: Implementar validaciones y registro
-        pass
+        
+        # 1. Validaciones
+        if not patente.strip() or not estado.strip():
+            print("Hay campos obligatorios vacíos.")
+            return False
+
+        if capacidad <= 0:
+            print(f"La capacidad debe ser un número entero positivo.")
+            return False
+
+        for b in self.buses:
+            if b.patente.strip().upper() == patente.strip().upper():
+                print(f"La patente {patente} ya existe.")
+                return False
+            
+        # 2. Crear objeto y añadir a memoria
+        nuevo_id = str(len(self.buses) + 1)
+        nuevo_bus = Bus(nuevo_id, patente, capacidad, estado)
+        self.buses.append(nuevo_bus)
+
+        # 3. Guardar el nuevo registro
+        self._inicializar_archivo()
+        with open(BUSES, "a", newline = "", encoding = ENCODE) as archivo:
+            writer = csv.writer(archivo)
+            writer.writerow([
+                nuevo_bus.id_bus,
+                nuevo_bus.patente,
+                nuevo_bus.capacidad,
+                nuevo_bus.estado
+            ])
+
+        print("Bus registrado con éxito!")
+        return True
 
     def listar_buses(self) -> list:
         """RF02: Retorna el listado de buses."""
-        # TODO: Implementar
-        pass
+        self.cargar_buses()
+                
+        if not self.buses:
+            print("No hay buses registrados en el sistema")
+            return []
+        
+        print("\n-- LISTADO DE BUSES REGISTRADOS ---")
+        for b in self.buses:
+            print(f"ID : {b.id_bus} | Patente : {b.patente} | Capacidad : {b.capacidad} | Estado : {b.estado}")
+        return self.buses
 
     def consultar_bus(self, id_bus: str) -> Bus | None:
         """RF02: Consulta un bus específico por su ID."""
-        # TODO: Implementar
-        pass
-
+        for b in self.buses:
+            if b.id_bus.strip() == id_bus.strip():
+                return b
+        return None
 
 class CiudadGestion:
     def __init__(self):
@@ -183,15 +236,37 @@ class CiudadGestion:
 
     def _inicializar_y_cargar_catalogo(self) -> None:
         """RF03: Carga el catálogo fijo de las 6 ciudades si el archivo no existe o está vacío."""
-        # Ciudades fijas exigidas por pauta:
+        # Ciudades fijas exigidas:
         # 0: Concepción, 1: Chillán, 2: Linares, 3: Talca, 4: Rancagua, 5: Santiago
-        # TODO: Verificar archivo ciudades.csv, si no existe, crearlo con las 6 ciudades por defecto.
-        pass
+        if not os.path.exists(CIUDADES):
+            with open(CIUDADES, "w", newline = "", encoding = ENCODE) as archivo:
+                writer = csv.writer(archivo)
+                writer.writerow(["posicion", "ciudad"])
+                writer.writerow(["0", "Concepción"])
+                writer.writerow(["1", "Chillán"])
+                writer.writerow(["2", "Linares"])
+                writer.writerow(["3", "Talca"])
+                writer.writerow(["4", "Rancagua"])
+                writer.writerow(["5", "Santiago"])
+                
+        self.ciudades = []
+        with open(CIUDADES, "r", encoding = ENCODE) as archivo:
+            lector = csv.DictReader(archivo)
+            for fila in lector:
+                ciudad = Ciudad(
+                    posicion = int(fila["posicion"]),
+                    nombre = fila["nombre"]
+                    )
+                self.ciudades.append(ciudad)
 
     def listar_ciudades(self) -> list:
         """RF03: Retorna el catálogo completo de ciudades con sus posiciones."""
-        # TODO: Implementar
-        pass
+        self._inicializar_y_cargar_catalogo()
+
+        print("\n-- LISTADO DE CIUDADES REGISTRADAS ---")
+        for c in self.ciudades:
+            print(f"Posición : {c.posicion} | Ciudad : {c.ciudad}")
+        return self.ciudades
 
 
 class ViajeGestion:
@@ -204,26 +279,147 @@ class ViajeGestion:
 
     def _inicializar_archivo(self) -> None:
         """Crea el archivo viajes.csv con su cabecera si no existe."""
-        # TODO: Implementar
-        pass
+        
+        if not os.path.exists(VIAJES):
+            with open(VIAJES, "w", newline = "", encoding = ENCODE) as archivo:
+                writer = csv.writer(archivo)
+                writer.writerow(["id_viaje", "id_bus", "fecha", "hora", "p_origen", "p_destino", "tarifa_base"])
 
     def cargar_viajes(self) -> None:
         """Carga los viajes desde el archivo CSV."""
-        # TODO: Implementar
-        pass
+        
+        self._inicializar_archivo()
+                        
+        self.viajes = []
+        
+        with open (VIAJES, "r", encoding = ENCODE) as archivo:
+            
+            lector = csv.DictReader(archivo)
+            
+            for fila in lector:
+                viaje = Viaje(
+                    id_viaje = fila["id_viaje"],
+                    id_bus = fila["id_bus"],
+                    fecha = fila["fecha"],
+                    hora = fila["hora"],
+                    p_origen = fila["p_origen"],
+                    p_destino = fila["p_destino"],
+                    tarifa_base = float(fila["tarifa_base"])                 
+                )
+                
+                self.viajes.append(viaje)
+     
+    def validar_y_calcular_tramo(pos_origen: int, pos_destino: int, tarifa_base: float = 10000.0) -> tuple[bool, float, str]:
+        """
+        Valida que el tramo respete un sentido lógico (de sur a norte o de norte a sur) 
+        y calcula la tarifa automática según los segmentos no utilizados (10% descuento acumulativo por segmento).
+        Posiciones: 0:Concepción, 1:Chillán, 2:Linares, 3:Talca, 4:Rancagua, 5:Santiago
+        """
+        
+        # 1. Validar que origen y destino no sean iguales
+        if pos_origen == pos_destino:
+            return False, 0.0, "El origen y el destino no pueden ser iguales."
 
-    def guardar_viajes(self) -> None:
-        """Guarda los viajes en el archivo CSV."""
-        # TODO: Implementar
-        pass
+        # 2. Validar que estén dentro del rango válido (0 a 5)
+        if not (0 <= pos_origen <= 5) or not (0 <= pos_destino <= 5):
+            return False, 0.0, "Las posiciones deben estar entre 0 y 5."
 
-    def programar_viaje(self, id_bus: str, fecha: str, hora: str, id_origen: str, id_destino: str, tarifa_base: float) -> bool:
+        # Cantidad de segmentos totales del recorrido completo = 5 (de 0 a 5)
+        segmentos_totales = 5
+        
+        # Cantidad de segmentos que realmente usará el pasajero
+        segmentos_usados = abs(pos_destino - pos_origen)
+        
+        # Segmentos que NO se utilizan
+        segmentos_no_usados = segmentos_totales - segmentos_usados
+
+        # 4. Cálculo de tarifa: 10% de descuento acumulativo por cada segmento no utilizado
+        # Fórmula: tarifa_base * (1 - 0.10 * segmentos_no_usados)
+        descuento_porcentaje = 0.10 * segmentos_no_usados
+        tarifa_calculada = tarifa_base * (1 - descuento_porcentaje)
+
+        return True, tarifa_calculada, "Tramo válido."
+
+    def programar_viaje(self, id_bus: str, fecha: str, hora: str, p_origen: str, p_destino: str, tarifa_base: float) -> bool:
         """RF04: Programa un viaje validando que el bus exista, y que la ruta sea 
         estrictamente Concepción-Santiago o Santiago-Concepción."""
-        # TODO: Validar existencia del bus, validar sentido de origen/destino y registrar.
-        pass
+        
+        
+        # 1. Validaciones
+        if not id_bus.strip() or not fecha.strip() or not hora.strip() or not p_origen.strip() or not p_destino.strip():
+            print("Hay campos obligatorios vacíos para programar el viaje.")
+            return False
+
+        bus_encontrado = self.bus_gestion.consultar_bus(id_bus)
+        if not bus_encontrado:
+            print(f"Error: El bus con ID '{id_bus}' no existe en el sistema.")
+            return False
+        
+        
+        '''Aquí no entendí la lógica que pide la pauta, así que hice dos opciones:
+            - En la primera, una función que permite ingresar viajes desde cualquier lugar hasta cualquier lugar, 
+            mientras no quiera llagar a la misma ciudad o elija una posicion que no existe.
+            Además el calculo de tramo...(Que puede reutilizar o borrar Diego).
+            
+            - En la segunda, solo hay una condición con tramos predeterminados según la segunda tabla del PDF.'''
+        # OPCIÓN 1
+        self.validar_y_calcular_tramo()
+
+        ''' OPCIÓN 2 : RUTAS PREDETERMINADAS
+        
+        rutas_permitidas = [
+            ("Concepción", "Santiago"),
+            ("Chillán", "Santiago"),
+            ("Santiago", "Rancagua"),
+            ("Concepción", "Talca"),
+            ("Chillán", "Talca"),
+            ("Talca", "Linares"),
+            # Sentidos inversos
+            ("Santiago", "Concepción"),
+            ("Santiago", "Chillán"),
+            ("Rancagua", "Santiago"),
+            ("Talca", "Concepción"),
+            ("Talca", "Chillán"),
+            ("Linares", "Talca")
+        ]
+        
+
+        if (p_origen, p_destino) not in rutas_permitidas:
+            print("Error: La ruta ingresada no está permitida según las combinaciones oficiales.")
+            return False
+        '''
+
+        if tarifa_base <= 0:
+            print("❌ Error: La tarifa base debe ser mayor a 0.")
+            return False
+                        
+        # 2. Crear objeto y añadir a memoria
+        nuevo_id = str(len(self.viajes) + 1)
+        nuevo_viaje = Viaje(nuevo_id, id_bus, fecha, hora, p_origen, p_destino, tarifa_base)
+        self.viajes.append(nuevo_viaje)
+
+        # 3. Guardar el nuevo registro
+        self._inicializar_archivo()
+        with open(VIAJES, "a", newline = "", encoding = ENCODE) as archivo:
+            writer = csv.writer(archivo)
+            writer.writerow([
+                nuevo_viaje.id_viaje,
+                nuevo_viaje.id_bus,
+                nuevo_viaje.fecha,
+                nuevo_viaje.hora,
+                nuevo_viaje.p_origen,
+                nuevo_viaje.id_destino,
+                nuevo_viaje.tarifa_base
+            ])
+
+        print("Viaje registrado con éxito!")
+        return True
 
     def listar_viajes(self) -> list:
         """RF04: Retorna el listado de viajes programados."""
-        # TODO: Implementar
-        pass
+        self._inicializar_archivo()
+        
+        print("\n-- LISTADO DE VIAJES REGISTRAD0S ---")
+        for v in self.viajes:
+            print(f" ID : {v.id_viajes} | Bus : {v.id_bus} Fecha : {v.fecha} Hora : {v.hora} | Punto de origen : {v.p_origen} Punto de destino : {v.p_destino} | Tarifa : {v.tarifa_base}")
+        return self.viajes
