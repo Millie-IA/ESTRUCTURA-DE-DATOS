@@ -132,6 +132,22 @@ class PasajeGestion:
                         return False
         return True
     
+    def mostrar_asientos_disponibles(self, id_viaje: str, p_origen: str, p_destino:str)->bool:
+        viaje = self._buscar_viaje_por_id(id_viaje)
+        if not viaje:
+            print(Fore.RED + f"Error - El viaje con ID {id_viaje} no existe.")
+            return False
+        
+        bus = self.bus_gestion.consultar_bus(viaje.id_bus)
+        if not bus:
+            print(Fore.RED + f"Error - El bus asociado al viaje no existe")
+            return False
+        
+        pos_orig = self._obtener_posicion_ciudad(p_origen)
+        pos_dest = self._obtener_posicion_ciudad(p_destino)
+        if pos_orig is None or pos_dest is None or pos_orig == pos_dest:
+            print(Fore.RED + "Error - Tramo de origen/destino no válido.")
+            return False
     
     def vender_pasaje(self, id_cliente:str, id_viaje:str, p_origen:str, p_destino:str, asiento:int)-> bool:
         cliente = self.cliente_gestion.buscar_cliente_por_id(id_cliente)
