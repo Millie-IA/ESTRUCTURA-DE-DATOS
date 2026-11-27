@@ -38,7 +38,7 @@ class PasajeGestion:
                     writer = csv.writer(archivo)
                     writer.writerow(["id_pasaje", "id_viaje", "id_cliente", "p_origen", "p_destino", "asiento", "valor", "estado"])
         except OSError as e:
-            print(f"Error de archivo al inicializar {PASAJES}: {e}")
+            print(Fore.YELLOW + "\nError de archivo al inicializar {PASAJES}: {e}")
         """Crea pasajes.csv con su cabecera si no existe."""
         # TODO: verificar os.path.exists y crear cabecera con csv.writer
 
@@ -63,7 +63,7 @@ class PasajeGestion:
                     )
                     self.pasajes.append(pasaje)
         except (OSError, ValueError, KeyError) as e:
-            print(f"Error al leer o convertir datos desde {PASAJES}: {e}")
+            print(Fore.YELLOW + "\nError al leer o convertir datos desde {PASAJES}: {e}")
 
     # TODO: leer csv con DictReader y armar lista de pasajes
 
@@ -87,7 +87,7 @@ class PasajeGestion:
                     ])
                     # TODO: escribir cabecera y filas con csv.writer
         except OSError as e:
-            print(f"Error al guardar en {PASAJES} (ve que no esté abierto): {e}")        
+            print(Fore.YELLOW + "\nError al guardar en {PASAJES} (ve que no esté abierto): {e}")        
                 
     def _obtener_posicion_ciudad(self, dato_ciudad:str)-> int | None:
         dato = str(dato_ciudad).strip().lower()
@@ -136,72 +136,20 @@ class PasajeGestion:
     def vender_pasaje(self, id_cliente:str, id_viaje:str, p_origen:str, p_destino:str, asiento:int)-> bool:
         cliente = self.cliente_gestion.buscar_cliente_por_id(id_cliente)
         if not cliente:
-            print(f"Error - El cliente con ID '{id_cliente}' no existe.")
+            print(Fore.RED + "\nError - El cliente con ID '{id_cliente}' no existe.")
             return False
         
         viaje = self._buscar_viaje_por_id(id_viaje)
         if not viaje:
-            print(f"Error - El viaje con ID '{id_viaje}' no existe.")
+            print(Fore.RED + "\nError - El viaje con ID '{id_viaje}' no existe.")
             return False
         
         bus = self.bus_gestion.consultar_bus(viaje.id_bus)
         if not bus:
-            print(f"Error - El bus asociado al viaje no existe.")
+            print(Fore.RED + "\nError - El bus asociado al viaje no existe.")
             return False
         
-        if asiento < 1 or asiento > bus.capacidad:
-            print(f"Error - El asiento {asiento} esta fuera de rango (1 a {bus.capacidad}).")
-            return False
-            
-        pos_p_orig = self._obtener_posicion_ciudad(p_origen)
-        pos_p_dest = self._obtener_posicion_ciudad(p_destino)
-        pos_v_orig = self._obtener_posicion_ciudad(viaje.p_origen)
-        pos_v_dest = self._obtener_posicion_ciudad(viaje.p_destino)
-        
-        if pos_p_orig is None or pos_p_dest is None or pos_v_orig is None or pos_v_dest is None:
-            print(f"Error - Ciudad o destino no válido.")
-            return False
-        
-        if pos_p_orig == pos_p_dest:
-            print(f"Error - El origen y el destino no pueden ser iguales.")
-            return False
-        
-        
-        sentido_viaje_norte = pos_v_dest > pos_v_orig
-        sentido_pasaje_norte = pos_p_dest > pos_p_orig
-        
-        if sentido_viaje_norte != sentido_pasaje_norte:
-            print(f"Error - El tramo seleccionado no respeta el sentido del viaje.")
-            return False
-        
-        min_v, max_v = min(pos_v_orig, pos_v_dest), max(pos_v_orig, pos_v_dest)
-        if not (min_v <= pos_p_orig <= max_v and min_v <= pos_p_dest <= max_v):
-            print("Error - El tramo solicitado esta fuera del recorrido del viaje")
-            return False
-        
-        if not self.reutilizacion_de_asientos_por_tramo(id_viaje, asiento, pos_p_orig, pos_p_dest):
-            print(f"Error - El asiento {asiento} ya está ocupado en parte o totalidad de ese tramo.")
-            return False
-
-        valor = self.calcular_tarifa(viaje.tarifa_base, pos_p_orig, pos_p_dest)
-        nuevo_id = str(len(self.pasajes) + 1)
-        nuevo_pasaje = Pasaje(
-            nuevo_id,
-            
-            str(id_viaje).strip(),
-            str(id_cliente).strip(),
-            str(p_origen).strip(),
-            str(p_destino).strip(),
-            asiento,
-            valor,
-            "HABILITADO"
-        )
-        
-        self.pasajes.append(nuevo_pasaje)
-        self.guardar_pasajes()
-        
-        print(f"Pasaje vendido con exito ID: {nuevo_id} | Valor: ${int(valor)}")
-        return True
+         
     
     
     
@@ -211,14 +159,14 @@ class PasajeGestion:
         for p in self.pasajes:
             if p.id_pasaje.strip() == str(id_pasaje).strip():
                 if p.estado == "ANULADO":
-                    print(f"El pasaje {id_pasaje} ya se encuentra ANULADO.")
+                    print(Fore.GREEN + "\nEl pasaje {id_pasaje} ya se encuentra ANULADO.")
                     return False
                 
                 p.estado = "ANULADO"
                 self.guardar_pasajes()
-                print(f"pasaje {id_pasaje} anulado con éxito.")
+                print(Fore.GREEN + "\npasaje {id_pasaje} anulado con éxito.")
                 return True
-        print(f"Error - no se encontro un pasaje con id '{id_pasaje}'.")
+        print(Fore.RED + "\nError - no se encontro un pasaje con id '{id_pasaje}'.")
         return False
     
 
