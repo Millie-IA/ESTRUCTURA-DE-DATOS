@@ -176,16 +176,17 @@ def main() -> None:
             
             print(Fore.YELLOW + "\nParadas disponibles en la ruta:")
             for c in ciudad_gestion.ciudades:
-                print(f" [{c.posicion}] {c.nombre}")
+                print(f" [{c.posicion}] {c.ciudad}")
                 
             p_origen = input(Fore.WHITE + "\nIngrese ciudad o posición de origen: ").strip()
             p_destino = input(Fore.WHITE + "Ingrese ciudad o posicion de destino: ").strip()
             
-            try:
-                asiento = int(input(Fore.WHITE + "Ingreso número de asiento: ").strip())
-                pasaje_gestion.vender_pasaje(id_cliente, id_viaje, p_origen, p_destino, asiento)
-            except ValueError:
-                print(Fore.RED + "Error - El número de asiento debe ser un entero válido")
+            if pasaje_gestion.mostrar_asientos_disponibles(id_viaje, p_origen, p_destino):
+                try:
+                    asiento = int(input(Fore.WHITE + "Ingrese número de asiento: ").strip())
+                    pasaje_gestion.vender_pasaje(id_cliente, id_viaje, p_origen, p_destino, asiento)
+                except ValueError:
+                    print(Fore.RED + "Error - El número de asiento debe ser un entero válido")
             pausar()
 
         elif opcion == "6":
@@ -294,7 +295,7 @@ def main() -> None:
 
                     print(Fore.YELLOW + "\nParadas en el sentido del viaje:")
                     for c in paradas_ordenadas:
-                        print(f" [{c.posicion}] {c.nombre}")
+                        print(f" [{c.posicion}] {c.ciudad}")
 
                     orig = input(Fore.WHITE + "\nCiudad o posición de origen del tramo: ").strip()
                     dest = input(Fore.WHITE + "Ciudad o posición de destino del tramo: ").strip()
