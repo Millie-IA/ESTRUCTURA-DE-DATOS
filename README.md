@@ -42,12 +42,16 @@ Este integrante se encarga de la visualización, la experiencia de usuario y de 
   - RF09 (Consultas y reportes): Mostrar pasajes vigentes/anulados, recaudación vigente del viaje y ocupación de asientos por tramo.
 
 ### ORGANIZACIÓN DEL PROYECTO
-Según lo anterior cada integrante desarrollo sus requerimientos asignados en los archivos nombreados RF_numero(RF_01_AL_04.py)
+Los requerimientos de código se distribuyen en módulos específicos por integrante (por ejemplo, RF_01_AL_04.py).
 
-La persistencia de datos se mantiene en los archivos .CSV de cada clase presente del proyecto
+La persistencia de datos se gestiona mediante archivos CSV para cada entidad.
 
-Los menus de interaccion se encuentran todos dentro de App.py
+Los menús de interacción con el usuario se centralizan en el archivo App.py.
 
 ### ESTRUCTURAS / ALGORITMOS UTILIZADOS
-En este proyecto se eligió utilizar clases simulando POO, ya que se era más organizado de programar con clases para las entidades y clases para las gestiones de estas. Dentro de esos gestores hay funciones de busqueda en las cuales se ocupó el algoritmo de busqueda secuencial, de igual modo dentro de las nominas de pasajeros por viajes (RF_08.py) se usa el algoritmo Bubble Sort para listar las nominas.
+Programación Orientada a Objetos (Simulada): Se estructuró el código mediante clases para las entidades del dominio y clases gestoras para mantener una arquitectura limpia y organizada.
+
+Algoritmos de Búsqueda: Se implementó búsqueda secuencial dentro de los métodos de gestión y búsqueda de entidades.
+
+Algoritmos de Ordenamiento: Se utilizó Bubble Sort para ordenar las nóminas de pasajeros por viaje de manera manual en el módulo correspondiente.
 '''
