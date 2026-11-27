@@ -1,0 +1,20 @@
+﻿id_cliente,rut,nombres,apellido_paterno,apellido_materno,contacto
+1,18.452.319-4,Camila Fernanda,González,Muñoz,+56987451230
+2,19.234.876-K,Matías Ignacio,González,Rojas,matias.gonzalez@gmail.com
+3,17.890.123-5,Sebastián Andrés,González,Muñoz,+56976543219
+4,20.145.678-2,Valentina Paz,Pérez,Soto,vale.perez@outlook.cl
+5,16.543.210-8,Diego Alejandro,Muñoz,Contreras,+56965432187
+6,21.098.765-3,Camila Fernanda,Silva,Vargas,camila.silva@usm.cl
+7,15.321.987-6,Rodrigo Esteban,Tapia,Morales,+56991234567
+8,18.765.432-1,Constanza Belén,Rojas,Herrera,coni.rojas@gmail.com
+9,19.876.543-9,Felipe Eduardo,Morales,Castillo,+56982345671
+10,20.654.321-0,Javiera Antonia,Castillo,Fuentes,javi.castillo@yahoo.cl
+11,14.987.654-7,Carlos Alberto,Sepúlveda,Díaz,+56973456782
+12,21.432.109-8,Fernanda Isabel,Espinoza,Navarro,fer.espinoza@gmail.com
+13,17.123.456-2,Tomás Benjamín,Araya,Gutiérrez,+56964567893
+14,18.901.234-5,Catalina Sofía,Valenzuela,Pino,cata.valenzuela@gmail.com
+15,19.567.890-3,Nicolás Patricio,Reyes,Salazar,+56955678904
+16,20.890.123-K,Daniela Andrea,Torres,Mendoza,dani.torres@hotmail.com
+17,16.234.567-1,Gonzalo Javier,Fuentes,Ortiz,+56946789015
+18,21.789.012-4,Antonia Beatriz,Cárdenas,Vera,antonia.cardenas@gmail.com
+19,123456789,A,Q,E,12345678

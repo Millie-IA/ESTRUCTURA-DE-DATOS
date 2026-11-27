@@ -2,11 +2,12 @@ import os
 from colorama import init, Fore, Style
 from RF_01_AL_04 import ClienteGestion, BusGestion, CiudadGestion, ViajeGestion
 from RF_05_AL_07 import PasajeGestion
+from RF_08 import NominaGestion
+from RF_09 import ReporteGestion
 init(autoreset=True)
 
 def limpiar_pantalla() -> None:
     os.system("cls" if os.name == "nt" else "clear")
-
 def pausar() -> None:
     """Detiene la ejecución brevemente para que el usuario lea los mensajes."""
     input(Fore.YELLOW + "\nPresione Enter para continuar..." + Style.RESET_ALL)
@@ -19,6 +20,8 @@ def main() -> None:
     ciudad_gestion = CiudadGestion()
     viaje_gestion = ViajeGestion(bus_gestion, ciudad_gestion)
     pasaje_gestion = PasajeGestion(cliente_gestion, bus_gestion, ciudad_gestion, viaje_gestion)
+    nomina_gestion = NominaGestion(cliente_gestion,bus_gestion,ciudad_gestion,viaje_gestion,pasaje_gestion)
+    reporte_gestion = ReporteGestion(cliente_gestion,bus_gestion,ciudad_gestion,viaje_gestion,pasaje_gestion)
 
     while True:
         limpiar_pantalla()
@@ -135,14 +138,14 @@ def main() -> None:
                 if sub_op == "1":
                     print(Fore.CYAN + "\n-- PROGRAMAR VIAJE --")
                     print(Fore.YELLOW + "Ciudades del recorrido fijo:")
-                    for c in ciudad_gestion.ciudades:
-                        print(f"[{c.posicion}] {c.nombre}")
+                    print("Concepción (0) a Santiago (5).")
+                    print("Santiago (5) a Concepción (0).")
                     
                     id_bus = input("\nID del Bus existente: ")
                     fecha = input("Fecha (YYYY-MM-DD): ")
                     hora = input("Hora (HH:MM): ")
-                    p_origen = input("Ciudad Origen (Nombre o posición): ")
-                    p_destino = input("Ciudad Destino (Nombre o posición): ")
+                    p_origen = input("Ciudad Origen (posición): ")
+                    p_destino = input("Ciudad Destino (posición): ")
                     try:
                         tarifa_base = float(input("Tarifa Base de referencia (ej. 10000): "))
                     except ValueError:
@@ -207,15 +210,103 @@ def main() -> None:
 
         elif opcion == "7":
             limpiar_pantalla()
-            print(Fore.YELLOW + "\n[Módulo RF08: Nómina de Pasajeros por Viaje]")
-            print("Módulo listo para ser integrado.")
+            print(Fore.CYAN + Style.BRIGHT + "\n=== NÓMINA DE PASAJEROS POR VIAJE (RF08) ===")
+            viaje_gestion.listar_viajes()
+
+            if not viaje_gestion.viajes:
+                pausar()
+                continue
+
+            id_viaje = input(Fore.WHITE + "\nIngrese el ID del viaje: ").strip()
+            print(Fore.YELLOW + "\nCriterio de ordenación:")
+            print("  (a) Apellido paterno alfabético ascendente")
+            print("  (b) Nombres alfabético ascendente")
+            print("  (c) Número de asiento numérico ascendente")
+            criterio = input(Fore.GREEN + "Seleccione criterio (a / b / c) [por defecto c]: ").strip().lower()
+            if criterio == "":
+                criterio = "c"
+
+            nomina_gestion.mostrar_nomina_viaje(id_viaje, criterio)
             pausar()
 
         elif opcion == "8":
-            limpiar_pantalla()
-            print(Fore.YELLOW + "\n[Módulo RF09: Consultas y Reportes]")
-            print("Módulo listo para ser integrado.")
-            pausar()
+            while True:
+                limpiar_pantalla()
+                print(Fore.CYAN + Style.BRIGHT + "\n=== CONSULTAS Y REPORTES (RF09) ===")
+                print("1. Listados (Clientes, Buses o Viajes programados)")
+                print("2. Pasajes vigentes y anulados de un viaje")
+                print("3. Recaudación vigente del viaje")
+                print("4. Ocupación y disponibilidad de asientos por tramo")
+                print("5. Volver al Menú Principal")
+                sub_op = input(Fore.GREEN + "Seleccione una opción (1-5): " + Style.RESET_ALL).strip()
+
+                if sub_op == "1":
+                    while True:
+                        limpiar_pantalla()
+                        print(Fore.CYAN + Style.BRIGHT + "\n=== SELECCIÓN DE LISTADO ===")
+                        print("1. Listado de Clientes")
+                        print("2. Listado de Buses")
+                        print("3. Listado de Viajes Programados")
+                        print("4. Salir / Volver")
+                        op_lista = input(Fore.GREEN + "Seleccione qué lista desea ver (1-4): " + Style.RESET_ALL).strip()
+
+                        if op_lista == "1":
+                            limpiar_pantalla()
+                            cliente_gestion.listar_clientes()
+                            pausar()
+                        elif op_lista == "2":
+                            limpiar_pantalla()
+                            bus_gestion.listar_buses()
+                            pausar()
+                        elif op_lista == "3":
+                            limpiar_pantalla()
+                            viaje_gestion.listar_viajes()
+                            pausar()
+                        elif op_lista == "4":
+                            break
+                        else:
+                            print(Fore.RED + "Opción inválida. Intente nuevamente.")
+                            pausar()
+
+                elif sub_op == "2":
+                    limpiar_pantalla()
+                    viaje_gestion.listar_viajes()
+                    id_v = input(Fore.WHITE + "\nIngrese el ID del viaje: ").strip()
+                    reporte_gestion.listar_pasajes_viaje_con_estado(id_v)
+                    pausar()
+
+                elif sub_op == "3":
+                    limpiar_pantalla()
+                    viaje_gestion.listar_viajes()
+                    id_v = input(Fore.WHITE + "\nIngrese el ID del viaje: ").strip()
+                    reporte_gestion.calcular_recaudacion_vigente(id_v)
+                    pausar()
+
+                elif sub_op == "4":
+                    limpiar_pantalla()
+                    viaje_gestion.listar_viajes()
+                    id_v = input(Fore.WHITE + "\nIngrese el ID del viaje: ").strip()
+                    paradas_ordenadas = reporte_gestion.obtener_ciudades_en_sentido_viaje(id_v)
+                    if not paradas_ordenadas:
+                        print(Fore.RED + f"Error: No existe un viaje con ID '{id_v}'.")
+                        pausar()
+                        continue
+
+                    print(Fore.YELLOW + "\nParadas en el sentido del viaje:")
+                    for c in paradas_ordenadas:
+                        print(f" [{c.posicion}] {c.nombre}")
+
+                    orig = input(Fore.WHITE + "\nCiudad o posición de origen del tramo: ").strip()
+                    dest = input(Fore.WHITE + "Ciudad o posición de destino del tramo: ").strip()
+                    reporte_gestion.consultar_ocupacion_tramo(id_v, orig, dest)
+                    pausar()
+
+                elif sub_op == "5":
+                    break
+
+                else:
+                    print(Fore.RED + "Opción inválida. Intente nuevamente.")
+                    pausar()
 
         elif opcion == "9":
             print(Fore.GREEN + "\n¡Gracias por utilizar RutaSur Transportes! Saliendo del sistema...")

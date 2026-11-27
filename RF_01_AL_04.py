@@ -2,6 +2,7 @@ import os
 import csv
 from colorama import init, Fore, Style
 
+init(autoreset = True)
 
 # ARCHIVOS
 
@@ -35,7 +36,7 @@ class Bus:
 class Ciudad:
     def __init__(self, posicion: int, ciudad: str) -> None:
         self.posicion = posicion
-        self.nombre = ciudad
+        self.ciudad = ciudad
 
 class Viaje:
     def __init__(self, id_viaje: str, id_bus: str, fecha: str, hora: str, p_origen: str, p_destino: str, tarifa_base: float) -> None:
@@ -130,7 +131,7 @@ class ClienteGestion:
             print(Fore.YELLOW + "No hay clientes registrados en el sistema")
             return []
         
-        print(Fore.CYAN + "\n-- LISTADO DE CLIENTES REGISTRADOS ---")
+        print(Fore.CYAN + "\n--- LISTADO DE CLIENTES REGISTRADOS ---")
         for c in self.clientes:
             print(f"ID : {c.id_cliente} | RUT : {c.rut} | Nombre completo : {c.nombres} {c.apellido_paterno} {c.apellido_materno} | Contacto : {c.contacto}")
         return self.clientes
@@ -220,7 +221,7 @@ class BusGestion:
             print(Fore.YELLOW + "No hay buses registrados en el sistema")
             return []
         
-        print(Fore.CYAN + "\n-- LISTADO DE BUSES REGISTRADOS ---")
+        print(Fore.CYAN + "\n--- LISTADO DE BUSES REGISTRADOS ---")
         for b in self.buses:
             print(f"ID : {b.id_bus} | Patente : {b.patente} | Capacidad : {b.capacidad} | Estado : {b.estado}")
         return self.buses
@@ -266,11 +267,10 @@ class CiudadGestion:
         """RF03: Retorna el catálogo completo de ciudades con sus posiciones."""
         self._inicializar_y_cargar_catalogo()
 
-        print(Fore.CYAN + "\n-- LISTADO DE CIUDADES REGISTRADAS ---")
+        print(Fore.CYAN + "\n--- LISTADO DE CIUDADES REGISTRADAS ---")
         for c in self.ciudades:
             print(f"Posición : {c.posicion} | Ciudad : {c.ciudad}")
         return self.ciudades
-
 
 class ViajeGestion:
     def __init__(self, bus_gestion: BusGestion, ciudad_gestion: CiudadGestion) -> None:
@@ -312,92 +312,82 @@ class ViajeGestion:
                 
                 self.viajes.append(viaje)
      
-    def validar_y_calcular_tramo(self, pos_origen: int, pos_destino: int, tarifa_base: float = 10000.0) -> tuple[bool, float, str]:
-        """
-        Valida que el tramo respete un sentido lógico (de sur a norte o de norte a sur) 
-        y calcula la tarifa automática según los segmentos no utilizados (10% descuento acumulativo por segmento).
-        Posiciones: 0:Concepción, 1:Chillán, 2:Linares, 3:Talca, 4:Rancagua, 5:Santiago
-        """
+    def validar_y_calcular_tramo(self, p_origen: int, p_destino: int, tarifa_base: float = 10000.0) -> tuple[bool, float, str]:
+        """Valida que el tramo sea estrictamente Concepción (0) <-> Santiago (5) o viceversa."""
         
         # 1. Validar que origen y destino no sean iguales
-        if pos_origen == pos_destino:
+        if p_origen == p_destino:
             return False, 0.0, "El origen y el destino no pueden ser iguales."
 
         # 2. Validar que estén dentro del rango válido (0 a 5)
-        if not (0 <= pos_origen <= 5) or not (0 <= pos_destino <= 5):
+        if not (0 <= p_origen <= 5) or not (0 <= p_destino <= 5):
             return False, 0.0, "Las posiciones deben estar entre 0 y 5."
+        
+        # 3. Validación estricta
+        if not ((p_origen == 0 and p_destino == 5) or (p_origen == 5 and p_destino == 0)):
+            return False, 0.0, "Ruta no permitida: Solo se permiten viajes directos entre Concepción (0) y Santiago (5)."
 
         # Cantidad de segmentos totales del recorrido completo = 5 (de 0 a 5)
         segmentos_totales = 5
-        
-        # Cantidad de segmentos que realmente usará el pasajero
-        segmentos_usados = abs(pos_destino - pos_origen)
-        
-        # Segmentos que NO se utilizan
-        segmentos_no_usados = segmentos_totales - segmentos_usados
+        segmentos_usados = 5
+        segmentos_no_usados = 0
 
         # 4. Cálculo de tarifa: 10% de descuento acumulativo por cada segmento no utilizado
         # Fórmula: tarifa_base * (1 - 0.10 * segmentos_no_usados)
         descuento_porcentaje = 0.10 * segmentos_no_usados
         tarifa_calculada = tarifa_base * (1 - descuento_porcentaje)
 
-        return True, tarifa_calculada, "Tramo válido."
+        return True, tarifa_calculada, Fore.GREEN + "Tramo válido."
 
     def programar_viaje(self, id_bus: str, fecha: str, hora: str, p_origen: int, p_destino: int, tarifa_base: float) -> bool:
         """RF04: Programa un viaje validando que el bus exista, y que la ruta sea 
         estrictamente Concepción-Santiago o Santiago-Concepción."""
         
-        
         # 1. Validaciones
         if not id_bus.strip() or not fecha.strip() or not hora.strip() or not str(p_origen).strip() or not str(p_destino).strip():
             print(Fore.RED + "Error: Hay campos obligatorios vacíos para programar el viaje.")
             return False
-        p_origen = int(p_origen)
-        p_destino = int(p_destino)
-
+        
         bus_encontrado = self.bus_gestion.consultar_bus(id_bus)
         if not bus_encontrado:
             print(Fore.RED + f"Error: El bus con ID '{id_bus}' no existe en el sistema.")
             return False
         
-        
-        '''Aquí no entendí la lógica que pide la pauta, así que hice dos opciones:
-            - En la primera, una función que permite ingresar viajes desde cualquier lugar hasta cualquier lugar, 
-            mientras no quiera llagar a la misma ciudad o elija una posicion que no existe.
-            Además el calculo de tramo...(Que puede reutilizar o borrar Diego).
-            
-            - En la segunda, solo hay una condición con tramos predeterminados según la segunda tabla del PDF.'''
-        # OPCIÓN 1
-        self.validar_y_calcular_tramo(p_origen, p_destino)
-
-        ''' OPCIÓN 2 : RUTAS PREDETERMINADAS
-        
-        rutas_permitidas = [
-            ("Concepción", "Santiago"),
-            ("Chillán", "Santiago"),
-            ("Santiago", "Rancagua"),
-            ("Concepción", "Talca"),
-            ("Chillán", "Talca"),
-            ("Talca", "Linares"),
-            # Sentidos inversos
-            ("Santiago", "Concepción"),
-            ("Santiago", "Chillán"),
-            ("Rancagua", "Santiago"),
-            ("Talca", "Concepción"),
-            ("Talca", "Chillán"),
-            ("Linares", "Talca")
-        ]
-        
-
-        if (p_origen, p_destino) not in rutas_permitidas:
-            print(Fore.RED + "Error: La ruta ingresada no está permitida según las combinaciones oficiales.")
-            return False
-        '''
-
         if tarifa_base <= 0:
             print(Fore.RED + "Error: La tarifa base debe ser mayor a 0.")
             return False
-                        
+        
+        p_origen_pos = None
+        for c in self.ciudad_gestion.ciudades:
+            if c.ciudad.upper() == str(p_origen).strip().upper():
+                p_origen_pos = c.posicion
+                break
+        
+        if p_origen_pos is None:
+            try:
+                p_origen_pos = int(p_origen)
+            except ValueError:
+                print(Fore.RED + "Error: Ciudad de origen inválida.")
+                return False
+        
+        p_destino_pos = None
+        for c in self.ciudad_gestion.ciudades:
+            if c.ciudad.upper() == str(p_destino).strip().upper():
+                p_destino_pos = c.posicion
+                break
+        
+        if p_destino_pos is None:
+            try:
+                p_destino_pos = int(p_destino)
+            except ValueError:
+                print(Fore.RED + "Error: Ciudad de origen inválida.")
+                return False
+        
+        valido, tarifa_calculada, msj = self.validar_y_calcular_tramo(p_origen_pos, p_destino_pos, tarifa_base)
+        if not valido:
+            print(Fore.RED + "Error: {msj}")
+            return False
+         
         # 2. Crear objeto y añadir a memoria
         nuevo_id = str(len(self.viajes) + 1)
         nuevo_viaje = Viaje(nuevo_id, id_bus, fecha, hora, p_origen, p_destino, tarifa_base)
@@ -424,7 +414,11 @@ class ViajeGestion:
         """RF04: Retorna el listado de viajes programados."""
         self._inicializar_archivo()
         
-        print(Fore.CYAN + "\n-- LISTADO DE VIAJES REGISTRAD0S ---")
+        if not self.viajes:
+            print(Fore.YELLOW + "No hay viajes en el sistema")
+            return []
+        
+        print(Fore.CYAN + "\n--- LISTADO DE VIAJES REGISTRAD0S ---")
         for v in self.viajes:
             print(f" ID : {v.id_viaje} | Bus : {v.id_bus} Fecha : {v.fecha} Hora : {v.hora} | Punto de origen : {v.p_origen} Punto de destino : {v.p_destino} | Tarifa : {v.tarifa_base}")
         return self.viajes

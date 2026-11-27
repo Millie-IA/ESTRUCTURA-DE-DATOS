@@ -92,7 +92,7 @@ class PasajeGestion:
     def _obtener_posicion_ciudad(self, dato_ciudad:str)-> int | None:
         dato = str(dato_ciudad).strip().lower()
         for c in self.ciudad_gestion.ciudades:
-            nombre_c = c.nombre.strip().lower()
+            nombre_c = c.ciudad.strip().lower()
             if str(c.posicion).strip() == dato or nombre_c == dato:
                 return int(c.posicion)
         return None
