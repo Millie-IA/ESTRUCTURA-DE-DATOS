@@ -380,17 +380,17 @@ class ViajeGestion:
             try:
                 p_destino_pos = int(p_destino)
             except ValueError:
-                print(Fore.RED + "Error: Ciudad de origen inválida.")
+                print(Fore.RED + "Error: Ciudad de destino inválida.")
                 return False
         
         valido, tarifa_calculada, msj = self.validar_y_calcular_tramo(p_origen_pos, p_destino_pos, tarifa_base)
         if not valido:
-            print(Fore.RED + "Error: {msj}")
+            print(Fore.RED + f"Error: {msj}")
             return False
          
         # 2. Crear objeto y añadir a memoria
         nuevo_id = str(len(self.viajes) + 1)
-        nuevo_viaje = Viaje(nuevo_id, id_bus, fecha, hora, p_origen, p_destino, tarifa_base)
+        nuevo_viaje = Viaje(nuevo_id, id_bus, fecha, hora, str(p_origen_pos), str(p_destino_pos), tarifa_base)
         self.viajes.append(nuevo_viaje)
 
         # 3. Guardar el nuevo registro

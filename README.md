@@ -20,7 +20,7 @@ python App.py
 --> Integrante 1 (Mylenne): Módulo Base, Persistencia y CRUD de Entidades
 Este integrante sienta las bases del proyecto para que los demás puedan consumir los datos.
 
- Responsabilidades: Implementar el sistema de persistencia en archivos (JSON o CSV) asegurando que maneje archivos vacíos o inexistentes sin caídas.
+ Responsabilidades: Implementar el sistema de persistencia en archivos (CSV) asegurando que maneje archivos vacíos o inexistentes sin caídas.
   - RF01 (Clientes): Registro, listado, búsqueda y validación de RUTs duplicados.   
   - RF02 (Buses): Registro, listado y consulta de buses.   
   - RF03 y RF04 (Ciudades y Viajes): Cargar el catálogo fijo de las 6 ciudades y programar los viajes (Concepción-Santiago / Santiago-Concepción) con su tarifa base.
