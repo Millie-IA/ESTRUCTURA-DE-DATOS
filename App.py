@@ -168,7 +168,7 @@ def main() -> None:
             cliente_gestion.listar_clientes()
             id_cliente  = input(Fore.WHITE + "\nIngrese ID del cliente").strip()
             
-            viaje_gestion.listar_clietes()
+            viaje_gestion.listar_viajes()
             id_viaje = input(Fore.WHITE + "\nIngrese ID del viaje: ").strip()
             
             print(Fore.YELLOW + "\nParadas disponibles en la ruta:")
@@ -187,8 +187,22 @@ def main() -> None:
 
         elif opcion == "6":
             limpiar_pantalla()
-            print(Fore.YELLOW + "\n[Módulo RF07: Anulación de Pasajes]")
-            print("Módulo listo para ser integrado.")
+            print(Fore.CYAN + Style.BRIGHT + "\n=== ANULACION DE PASAJES {RF07}===")
+            if not pasaje_gestion.pasajes:
+                print(Fore.YELLOW + "Advertencia: no hay pasajes registrados en el sistema")
+                pausar()
+                continue
+            
+            print(Fore.CYAN + "\n-- PASAJES REGISTRADOS --")
+            for p in pasaje_gestion.pasajes:
+                color_est = Fore.green if p.estado == "HABILITADO" else Fore.RED
+                print(
+                    f"ID: {p.id_pasaje} | Viaje: {p.id_viaje} | Cliente: {p.id_cliente} | "
+                    f"Tramo: {p.p_origen} -> {p.p_destino} | Asiento: {p.asiento} | "
+                    f"Valor: ${int(p.valor)} | Estado: {color_est}{p.estado}"
+                )
+            id_pasaje = input(Fore.WHITE + "\nIngrese el ID del pasaje a anular: ").strip()
+            pasaje_gestion.anular_pasaje(id_pasaje)
             pausar()
 
         elif opcion == "7":
