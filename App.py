@@ -181,11 +181,12 @@ def main() -> None:
             p_origen = input(Fore.WHITE + "\nIngrese ciudad o posición de origen: ").strip()
             p_destino = input(Fore.WHITE + "Ingrese ciudad o posicion de destino: ").strip()
             
-            try:
-                asiento = int(input(Fore.WHITE + "Ingreso número de asiento: ").strip())
-                pasaje_gestion.vender_pasaje(id_cliente, id_viaje, p_origen, p_destino, asiento)
-            except ValueError:
-                print(Fore.RED + "Error - El número de asiento debe ser un entero válido")
+            if pasaje_gestion.mostrar_asientos_disponibles(id_viaje, p_origen, p_destino):
+                try:
+                    asiento = int(input(Fore.WHITE + "Ingreso número de asiento: ").strip())
+                    pasaje_gestion.vender_pasaje(id_cliente, id_viaje, p_origen, p_destino, asiento)
+                except ValueError:
+                    print(Fore.RED + "Error - El número de asiento debe ser un entero válido")
             pausar()
 
         elif opcion == "6":

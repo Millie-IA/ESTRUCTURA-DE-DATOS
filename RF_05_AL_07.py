@@ -162,10 +162,7 @@ class PasajeGestion:
         print(Fore.GREEN + f"Disponibles ({len(libres)}): " + ( ", ".join(libres) if libres else "Ninguno"))
         if ocupados:
             print(Fore.RED  + f"Ocupados en este tramo ({len(ocupados)}): " + ", ".join(ocupados))
-            return True
-        
-        
-        
+        return True
         
     
     
