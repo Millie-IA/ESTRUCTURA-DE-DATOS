@@ -13,11 +13,12 @@ def pausar() -> None:
 
 def main() -> None:
     # Instanciar los gestores principales
-    pasaje_gestion = PasajeGestion(cliente_gestion, bus_gestion, ciudad_gestion, viaje_gestion)
+    
     cliente_gestion = ClienteGestion()
     bus_gestion = BusGestion()
     ciudad_gestion = CiudadGestion()
     viaje_gestion = ViajeGestion(bus_gestion, ciudad_gestion)
+    pasaje_gestion = PasajeGestion(cliente_gestion, bus_gestion, ciudad_gestion, viaje_gestion)
 
     while True:
         limpiar_pantalla()
@@ -162,14 +163,13 @@ def main() -> None:
 
         elif opcion == "5":
             limpiar_pantalla()
-            limpiar_pantalla()
             print(Fore.CYAN + Style.BRIGHT + "\n=== VENTA DE PASAJES (RF05 & RF06) ===")
             
             cliente_gestion.listar_clientes()
             id_cliente  = input(Fore.WHITE + "\nIngrese ID del cliente").strip()
             
             viaje_gestion.listar_clietes()
-            id_cliente = input(Fore.WHITE + "\nIngrese ID del viaje: ").strip()
+            id_viaje = input(Fore.WHITE + "\nIngrese ID del viaje: ").strip()
             
             print(Fore.YELLOW + "\nParadas disponibles en la ruta:")
             for c in ciudad_gestion.ciudades:
