@@ -34,17 +34,19 @@ def main() -> None:
         print(Fore.YELLOW + "9." + Style.RESET_ALL + " Salir")
         print(Fore.CYAN + "-" * 55)
 
-        opcion = input(Fore.GREEN + "Ingrese una opción (0-9): " + Style.RESET_ALL).strip()
+        opcion = input(Fore.GREEN + "Ingrese una opción (1-9): " + Style.RESET_ALL).strip()
 
         if opcion == "1":
             # --- SUBMENÚ CLIENTES (RF01) ---
             while True:
                 limpiar_pantalla()
+                
                 print(Fore.CYAN + "\n=== GESTIÓN DE CLIENTES ===")
                 print("1. Registrar Cliente")
                 print("2. Listar Clientes")
                 print("3. Buscar Cliente por ID")
                 print("4. Volver al Menú Principal")
+                
                 sub_op = input(Fore.GREEN + "Seleccione una opción: " + Style.RESET_ALL).strip()
                 
                 if sub_op == "1":
@@ -56,20 +58,28 @@ def main() -> None:
                     contacto = input("Contacto (Teléfono/Correo): ")
                     cliente_gestion.registrar_cliente(rut, nombres, ap_pat, ap_mat, contacto)
                     pausar()
+                    
                 elif sub_op == "2":
                     cliente_gestion.listar_clientes()
                     pausar()
+                    
+                    
                 elif sub_op == "3":
                     id_c = input("Ingrese el ID del cliente a buscar: ")
                     cli = cliente_gestion.buscar_cliente_por_id(id_c)
+                    
                     if cli:
                         print(Fore.GREEN + f"\n¡Cliente encontrado!")
                         print(f"ID: {cli.id_cliente} | RUT: {cli.rut} | Nombre: {cli.nombres} {cli.apellido_paterno} {cli.apellido_materno} | Contacto: {cli.contacto}")
+                    
                     else:
                         print(Fore.RED + "Error: No se encontró un cliente con ese ID.")
+                        
                     pausar()
+                    
                 elif sub_op == "4":
                     break
+                
                 else:
                     print(Fore.RED + "Opción inválida. Intente nuevamente.")
                     pausar()

@@ -36,7 +36,7 @@ class Bus:
 class Ciudad:
     def __init__(self, posicion: int, ciudad: str) -> None:
         self.posicion = posicion
-        self.nombre = ciudad
+        self.ciudad = ciudad
 
 class Viaje:
     def __init__(self, id_viaje: str, id_bus: str, fecha: str, hora: str, p_origen: str, p_destino: str, tarifa_base: float) -> None:
@@ -416,6 +416,10 @@ class ViajeGestion:
     def listar_viajes(self) -> list:
         """RF04: Retorna el listado de viajes programados."""
         self._inicializar_archivo()
+        
+        if not self.viajes:
+            print(Fore.YELLOW + "No hay viajes en el sistema")
+            return []
         
         print(Fore.CYAN + "\n-- LISTADO DE VIAJES REGISTRAD0S ---")
         for v in self.viajes:

@@ -5,6 +5,17 @@
     - Diego Saavedra
     - Mylenne Durán
 
+### INSTALACIÓN
+Abrir terminal de Python con una versión superior o igual a 3.11
+
+Escribir los siguientes comandos:
+-> Instalación de la biblioteca requeridas
+pip install -r requirements.txt
+
+### EJECUCIÓN
+Abrir la terminal de Python en la carpeta raíz del proyecto y ejecutar:
+python App.py
+
 ### REPARTO DE TAREAS
 --> Integrante 1 (Mylenne): Módulo Base, Persistencia y CRUD de Entidades
 Este integrante sienta las bases del proyecto para que los demás puedan consumir los datos.
@@ -29,4 +40,14 @@ Este integrante se encarga de la visualización, la experiencia de usuario y de 
  Responsabilidades:
   - RF08 (Nómina de pasajeros): Desarrollar la nómina por viaje. Atención: Debe implementar un algoritmo de ordenamiento manual (como Bubble Sort o Insertion Sort) para ordenar por apellido paterno, nombre o número de asiento, ya que la pauta prohíbe resolverlo únicamente con sort() o sorted().
   - RF09 (Consultas y reportes): Mostrar pasajes vigentes/anulados, recaudación vigente del viaje y ocupación de asientos por tramo.
+
+### ORGANIZACIÓN DEL PROYECTO
+Según lo anterior cada integrante desarrollo sus requerimientos asignados en los archivos nombreados RF_numero(RF_01_AL_04.py)
+
+La persistencia de datos se mantiene en los archivos .CSV de cada clase presente del proyecto
+
+Los menus de interaccion se encuentran todos dentro de App.py
+
+### ESTRUCTURAS / ALGORITMOS UTILIZADOS
+En este proyecto se eligió utilizar clases simulando POO, ya que se era más organizado de programar con clases para las entidades y clases para las gestiones de estas. Dentro de esos gestores hay funciones de busqueda en las cuales se ocupó el algoritmo de busqueda secuencial, de igual modo dentro de las nominas de pasajeros por viajes (RF_08.py) se usa el algoritmo Bubble Sort para listar las nominas.
 '''
