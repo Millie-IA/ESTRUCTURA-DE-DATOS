@@ -148,6 +148,26 @@ class PasajeGestion:
         if pos_orig is None or pos_dest is None or pos_orig == pos_dest:
             print(Fore.RED + "Error - Tramo de origen/destino no válido.")
             return False
+        
+        libres=[]
+        ocupados = []
+        for num_asiento in range(1, bus.capacidad + 1):
+            if self.reutilizacion_de_asientos_por_tramo(id_viaje, num_asiento, pos_orig, pos_dest):
+                libres.append(str(num_asiento))
+                
+            else:
+                ocupados.append(str(num_asiento))
+                
+        print(Fore.CYAN + f"\n=== DISPONIBILIDAD DE ASIENTOS (BUS { bus.patente} | Capacidad: {bus.capacidad}) ===")
+        print(Fore.GREEN + f"Disponibles ({len(libres)}): " + ( ", ".join(libres) if libres else "Ninguno"))
+        if ocupados:
+            print(Fore.RED  + f"Ocupados en este tramo ({len(ocupados)}): " + ", ".join(ocupados))
+            return True
+        
+        
+        
+        
+    
     
     def vender_pasaje(self, id_cliente:str, id_viaje:str, p_origen:str, p_destino:str, asiento:int)-> bool:
         cliente = self.cliente_gestion.buscar_cliente_por_id(id_cliente)
