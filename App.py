@@ -295,7 +295,7 @@ def main() -> None:
 
                     print(Fore.YELLOW + "\nParadas en el sentido del viaje:")
                     for c in paradas_ordenadas:
-                        print(f" [{c.posicion}] {c.nombre}")
+                        print(f" [{c.posicion}] {c.ciudad}")
 
                     orig = input(Fore.WHITE + "\nCiudad o posición de origen del tramo: ").strip()
                     dest = input(Fore.WHITE + "Ciudad o posición de destino del tramo: ").strip()
