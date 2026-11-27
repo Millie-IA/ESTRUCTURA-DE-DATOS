@@ -166,7 +166,7 @@ def main() -> None:
             print(Fore.CYAN + Style.BRIGHT + "\n=== VENTA DE PASAJES (RF05 & RF06) ===")
             
             cliente_gestion.listar_clientes()
-            id_cliente  = input(Fore.WHITE + "\nIngrese ID del cliente").strip()
+            id_cliente  = input(Fore.WHITE + "\nIngrese ID del cliente: ").strip()
             
             viaje_gestion.listar_viajes()
             id_viaje = input(Fore.WHITE + "\nIngrese ID del viaje: ").strip()

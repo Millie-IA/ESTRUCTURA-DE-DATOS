@@ -203,6 +203,10 @@ class PasajeGestion:
         print(f"Pasaje vendido con exito ID: {nuevo_id} | Valor: ${int(valor)}")
         return True
     
+    
+    
+    
+    
     def anular_pasaje(self, id_pasaje:str)-> bool:
         for p in self.pasajes:
             if p.id_pasaje.strip() == str(id_pasaje).strip():

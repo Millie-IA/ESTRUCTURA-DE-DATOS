@@ -2,7 +2,6 @@ import os
 import csv
 from colorama import init, Fore, Style
 
-init(autoreset = True)
 
 # ARCHIVOS
 
@@ -218,7 +217,7 @@ class BusGestion:
         self.cargar_buses()
                 
         if not self.buses:
-            print(Fore.YELLOW + "No hay buses registrados en el sistema")
+            print(Fore.ORANGE + "No hay buses registrados en el sistema")
             return []
         
         print(Fore.CYAN + "\n-- LISTADO DE BUSES REGISTRADOS ---")
@@ -271,6 +270,7 @@ class CiudadGestion:
         for c in self.ciudades:
             print(f"Posición : {c.posicion} | Ciudad : {c.ciudad}")
         return self.ciudades
+
 
 class ViajeGestion:
     def __init__(self, bus_gestion: BusGestion, ciudad_gestion: CiudadGestion) -> None:
@@ -346,51 +346,58 @@ class ViajeGestion:
     def programar_viaje(self, id_bus: str, fecha: str, hora: str, p_origen: int, p_destino: int, tarifa_base: float) -> bool:
         """RF04: Programa un viaje validando que el bus exista, y que la ruta sea 
         estrictamente Concepción-Santiago o Santiago-Concepción."""
-
+        
+        
         # 1. Validaciones
         if not id_bus.strip() or not fecha.strip() or not hora.strip() or not str(p_origen).strip() or not str(p_destino).strip():
             print(Fore.RED + "Error: Hay campos obligatorios vacíos para programar el viaje.")
             return False
-        
+        p_origen = int(p_origen)
+        p_destino = int(p_destino)
+
         bus_encontrado = self.bus_gestion.consultar_bus(id_bus)
         if not bus_encontrado:
             print(Fore.RED + f"Error: El bus con ID '{id_bus}' no existe en el sistema.")
             return False
         
+        
+        '''Aquí no entendí la lógica que pide la pauta, así que hice dos opciones:
+            - En la primera, una función que permite ingresar viajes desde cualquier lugar hasta cualquier lugar, 
+            mientras no quiera llagar a la misma ciudad o elija una posicion que no existe.
+            Además el calculo de tramo...(Que puede reutilizar o borrar Diego).
+            
+            - En la segunda, solo hay una condición con tramos predeterminados según la segunda tabla del PDF.'''
+        # OPCIÓN 1
+        self.validar_y_calcular_tramo(p_origen, p_destino)
+
+        ''' OPCIÓN 2 : RUTAS PREDETERMINADAS
+        
+        rutas_permitidas = [
+            ("Concepción", "Santiago"),
+            ("Chillán", "Santiago"),
+            ("Santiago", "Rancagua"),
+            ("Concepción", "Talca"),
+            ("Chillán", "Talca"),
+            ("Talca", "Linares"),
+            # Sentidos inversos
+            ("Santiago", "Concepción"),
+            ("Santiago", "Chillán"),
+            ("Rancagua", "Santiago"),
+            ("Talca", "Concepción"),
+            ("Talca", "Chillán"),
+            ("Linares", "Talca")
+        ]
+        
+
+        if (p_origen, p_destino) not in rutas_permitidas:
+            print(Fore.RED + "Error: La ruta ingresada no está permitida según las combinaciones oficiales.")
+            return False
+        '''
+
         if tarifa_base <= 0:
             print(Fore.RED + "Error: La tarifa base debe ser mayor a 0.")
             return False
-        
-        p_origen_pos = None
-        for c in self.ciudad_gestion.ciudades:
-            if c.nombre.upper() == str(p_origen).strip().upper():
-                p_origen_pos = c.posicion
-                break
-        
-        if p_origen_pos is None:
-            try:
-                p_origen_pos = int(p_origen)
-            except ValueError:
-                print(Fore.RED + "Error: Ciudad de origen inválida.")
-                return False
-        
-        p_destino_pos = None
-        for c in self.ciudad_gestion.ciudades:
-            if c.nombre.upper() == str(p_destino).strip().upper():
-                p_destino_pos = c.posicion
-                break
-        
-        if p_destino_pos is None:
-            try:
-                p_destino_pos = int(p_destino)
-            except ValueError:
-                print(Fore.RED + "Error: Ciudad de origen inválida.")
-                return False
-        
-        valido, tarifa_calculada, msj = self.validar_y_calcular_tramo(p_origen_pos, p_destino_pos, tarifa_base)
-        if not valido:
-            print(Fore.RED + "Error: {msg}")
-         
+                        
         # 2. Crear objeto y añadir a memoria
         nuevo_id = str(len(self.viajes) + 1)
         nuevo_viaje = Viaje(nuevo_id, id_bus, fecha, hora, p_origen, p_destino, tarifa_base)
