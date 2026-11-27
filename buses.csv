@@ -1,0 +1,7 @@
+﻿id_bus,patente,capacidad,estado
+1,ABCD-12,42,Disponible
+2,FGHI-34,46,En ruta
+3,JKLM-56,40,Disponible
+4,NPQR-78,44,En ruta
+5,STUV-90,38,Disponible
+6,WXYZ-21,42,Mantenimiento
