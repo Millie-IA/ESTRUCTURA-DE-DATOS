@@ -187,7 +187,7 @@ def main() -> None:
 
         elif opcion == "6":
             limpiar_pantalla()
-            print(Fore.CYAN + Style.BRIGHT + "\n=== ANULACION DE PASAJES {RF07}===")
+            print(Fore.CYAN + Style.BRIGHT + "\n=== ANULACION DE PASAJES (RF07)===")
             if not pasaje_gestion.pasajes:
                 print(Fore.YELLOW + "Advertencia: no hay pasajes registrados en el sistema")
                 pausar()
@@ -195,7 +195,7 @@ def main() -> None:
             
             print(Fore.CYAN + "\n-- PASAJES REGISTRADOS --")
             for p in pasaje_gestion.pasajes:
-                color_est = Fore.green if p.estado == "HABILITADO" else Fore.RED
+                color_est = Fore.GREEN if p.estado == "HABILITADO" else Fore.RED
                 print(
                     f"ID: {p.id_pasaje} | Viaje: {p.id_viaje} | Cliente: {p.id_cliente} | "
                     f"Tramo: {p.p_origen} -> {p.p_destino} | Asiento: {p.asiento} | "
@@ -221,7 +221,7 @@ def main() -> None:
             print(Fore.GREEN + "\n¡Gracias por utilizar RutaSur Transportes! Saliendo del sistema...")
             break
         else:
-            input(Fore.RED + "ERROR: Opción inválida. Ingrese números del 0 al 9. Presione Enter para continuar.")
+            input(Fore.RED + "ERROR: Opción inválida. Ingrese números del 1 al 9. Presione Enter para continuar.")
 
 if __name__ == "__main__":
     main()
