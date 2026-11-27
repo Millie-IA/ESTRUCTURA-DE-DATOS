@@ -131,7 +131,7 @@ class ClienteGestion:
             print(Fore.YELLOW + "No hay clientes registrados en el sistema")
             return []
         
-        print(Fore.CYAN + "\n-- LISTADO DE CLIENTES REGISTRADOS ---")
+        print(Fore.CYAN + "\n--- LISTADO DE CLIENTES REGISTRADOS ---")
         for c in self.clientes:
             print(f"ID : {c.id_cliente} | RUT : {c.rut} | Nombre completo : {c.nombres} {c.apellido_paterno} {c.apellido_materno} | Contacto : {c.contacto}")
         return self.clientes
@@ -221,7 +221,7 @@ class BusGestion:
             print(Fore.YELLOW + "No hay buses registrados en el sistema")
             return []
         
-        print(Fore.CYAN + "\n-- LISTADO DE BUSES REGISTRADOS ---")
+        print(Fore.CYAN + "\n--- LISTADO DE BUSES REGISTRADOS ---")
         for b in self.buses:
             print(f"ID : {b.id_bus} | Patente : {b.patente} | Capacidad : {b.capacidad} | Estado : {b.estado}")
         return self.buses
@@ -267,7 +267,7 @@ class CiudadGestion:
         """RF03: Retorna el catálogo completo de ciudades con sus posiciones."""
         self._inicializar_y_cargar_catalogo()
 
-        print(Fore.CYAN + "\n-- LISTADO DE CIUDADES REGISTRADAS ---")
+        print(Fore.CYAN + "\n--- LISTADO DE CIUDADES REGISTRADAS ---")
         for c in self.ciudades:
             print(f"Posición : {c.posicion} | Ciudad : {c.ciudad}")
         return self.ciudades
@@ -312,41 +312,37 @@ class ViajeGestion:
                 
                 self.viajes.append(viaje)
      
-    def validar_y_calcular_tramo(self, pos_origen: int, pos_destino: int, tarifa_base: float = 10000.0) -> tuple[bool, float, str]:
-        """
-        Valida que el tramo respete un sentido lógico (de sur a norte o de norte a sur) 
-        y calcula la tarifa automática según los segmentos no utilizados (10% descuento acumulativo por segmento).
-        Posiciones: 0:Concepción, 1:Chillán, 2:Linares, 3:Talca, 4:Rancagua, 5:Santiago
-        """
+    def validar_y_calcular_tramo(self, p_origen: int, p_destino: int, tarifa_base: float = 10000.0) -> tuple[bool, float, str]:
+        """Valida que el tramo sea estrictamente Concepción (0) <-> Santiago (5) o viceversa."""
         
         # 1. Validar que origen y destino no sean iguales
-        if pos_origen == pos_destino:
+        if p_origen == p_destino:
             return False, 0.0, "El origen y el destino no pueden ser iguales."
 
         # 2. Validar que estén dentro del rango válido (0 a 5)
-        if not (0 <= pos_origen <= 5) or not (0 <= pos_destino <= 5):
+        if not (0 <= p_origen <= 5) or not (0 <= p_destino <= 5):
             return False, 0.0, "Las posiciones deben estar entre 0 y 5."
+        
+        # 3. Validación estricta
+        if not ((p_origen == 0 and p_destino == 5) or (p_origen == 5 and p_destino == 0)):
+            return False, 0.0, "Ruta no permitida: Solo se permiten viajes directos entre Concepción (0) y Santiago (5)."
 
         # Cantidad de segmentos totales del recorrido completo = 5 (de 0 a 5)
         segmentos_totales = 5
-        
-        # Cantidad de segmentos que realmente usará el pasajero
-        segmentos_usados = abs(pos_destino - pos_origen)
-        
-        # Segmentos que NO se utilizan
-        segmentos_no_usados = segmentos_totales - segmentos_usados
+        segmentos_usados = 5
+        segmentos_no_usados = 0
 
         # 4. Cálculo de tarifa: 10% de descuento acumulativo por cada segmento no utilizado
         # Fórmula: tarifa_base * (1 - 0.10 * segmentos_no_usados)
         descuento_porcentaje = 0.10 * segmentos_no_usados
         tarifa_calculada = tarifa_base * (1 - descuento_porcentaje)
 
-        return True, tarifa_calculada, "Tramo válido."
+        return True, tarifa_calculada, Fore.GREEN + "Tramo válido."
 
     def programar_viaje(self, id_bus: str, fecha: str, hora: str, p_origen: int, p_destino: int, tarifa_base: float) -> bool:
         """RF04: Programa un viaje validando que el bus exista, y que la ruta sea 
         estrictamente Concepción-Santiago o Santiago-Concepción."""
-
+        
         # 1. Validaciones
         if not id_bus.strip() or not fecha.strip() or not hora.strip() or not str(p_origen).strip() or not str(p_destino).strip():
             print(Fore.RED + "Error: Hay campos obligatorios vacíos para programar el viaje.")
@@ -363,7 +359,7 @@ class ViajeGestion:
         
         p_origen_pos = None
         for c in self.ciudad_gestion.ciudades:
-            if c.nombre.upper() == str(p_origen).strip().upper():
+            if c.ciudad.upper() == str(p_origen).strip().upper():
                 p_origen_pos = c.posicion
                 break
         
@@ -376,7 +372,7 @@ class ViajeGestion:
         
         p_destino_pos = None
         for c in self.ciudad_gestion.ciudades:
-            if c.nombre.upper() == str(p_destino).strip().upper():
+            if c.ciudad.upper() == str(p_destino).strip().upper():
                 p_destino_pos = c.posicion
                 break
         
@@ -389,7 +385,8 @@ class ViajeGestion:
         
         valido, tarifa_calculada, msj = self.validar_y_calcular_tramo(p_origen_pos, p_destino_pos, tarifa_base)
         if not valido:
-            print(Fore.RED + "Error: {msg}")
+            print(Fore.RED + "Error: {msj}")
+            return False
          
         # 2. Crear objeto y añadir a memoria
         nuevo_id = str(len(self.viajes) + 1)
@@ -421,7 +418,7 @@ class ViajeGestion:
             print(Fore.YELLOW + "No hay viajes en el sistema")
             return []
         
-        print(Fore.CYAN + "\n-- LISTADO DE VIAJES REGISTRAD0S ---")
+        print(Fore.CYAN + "\n--- LISTADO DE VIAJES REGISTRAD0S ---")
         for v in self.viajes:
             print(f" ID : {v.id_viaje} | Bus : {v.id_bus} Fecha : {v.fecha} Hora : {v.hora} | Punto de origen : {v.p_origen} Punto de destino : {v.p_destino} | Tarifa : {v.tarifa_base}")
         return self.viajes
