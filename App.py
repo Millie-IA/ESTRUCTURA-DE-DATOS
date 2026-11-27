@@ -176,7 +176,7 @@ def main() -> None:
             
             print(Fore.YELLOW + "\nParadas disponibles en la ruta:")
             for c in ciudad_gestion.ciudades:
-                print(f" [{c.posicion}] {c.nombre}")
+                print(f" [{c.posicion}] {c.ciudad}")
                 
             p_origen = input(Fore.WHITE + "\nIngrese ciudad o posición de origen: ").strip()
             p_destino = input(Fore.WHITE + "Ingrese ciudad o posicion de destino: ").strip()
