@@ -32,8 +32,8 @@ class Viaje:
     id_bus: int
     fecha: str
     hora: str
-    id_origen: int
-    id_destino: int
+    ciudad_inicial: str
+    ciudad_final: str
     tarifa_base: int
 
 

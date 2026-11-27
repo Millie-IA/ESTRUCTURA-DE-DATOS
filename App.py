@@ -9,6 +9,8 @@ from ui.estilos_ui import (
 from ui.menu_buses import menu_buses
 from ui.menu_ciudades import menu_ciudades
 from ui.menu_clientes import menu_clientes
+from ui.menu_pasajes import menu_pasajes
+from ui.menu_viajes import menu_viajes
 
 
 def main() -> None:
@@ -18,6 +20,8 @@ def main() -> None:
         mensaje_opcion("1. Gestión de Clientes")
         mensaje_opcion("2. Gestión de Buses")
         mensaje_opcion("3. Consulta de Ciudades")
+        mensaje_opcion("4. Gestión de Viajes")
+        mensaje_opcion("5. Venta de Pasajes")
         mensaje_opcion("0. Salir")
 
         opcion = input("\nSeleccione una opción: ").strip()
@@ -28,6 +32,10 @@ def main() -> None:
             menu_buses()
         elif opcion == "3":
             menu_ciudades()
+        elif opcion == "4":
+            menu_viajes()
+        elif opcion == "5":
+            menu_pasajes()
         elif opcion == "0":
             mensaje_advertencia("Saliendo del sistema. Hasta pronto.")
             break
